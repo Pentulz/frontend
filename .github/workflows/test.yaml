@@ -31,4 +31,4 @@ jobs:
         with:
           name: coverage
           path: coverage
-          if-no-file-found: ignore
+          if-no-files-found: ignore
