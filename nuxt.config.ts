@@ -3,7 +3,14 @@ import tailwindcss from "@tailwindcss/vite";
 export default defineNuxtConfig({
   compatibilityDate: "2025-07-15",
   devtools: { enabled: true },
-  modules: ["@nuxt/eslint", "@nuxt/test-utils", "shadcn-nuxt", "@vueuse/nuxt"],
+  modules: [
+    "@nuxt/eslint",
+    "@nuxt/test-utils",
+    "shadcn-nuxt",
+    "@vueuse/nuxt",
+    "@nuxtjs/sitemap",
+    "@nuxtjs/robots",
+  ],
   ssr: true,
   css: ["~/assets/css/tailwind.css"],
   vite: {
@@ -19,5 +26,9 @@ export default defineNuxtConfig({
      * @default "./components/ui"
      */
     componentDir: "~/components/ui",
+  },
+  site: {
+    url: "https://pentulz.xyz/",
+    name: "Pentulz",
   },
 });
