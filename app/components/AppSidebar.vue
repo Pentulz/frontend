@@ -69,10 +69,10 @@ const data = {
           <SidebarMenu>
             <SidebarMenuItem v-for="item in group.items" :key="item.title">
               <SidebarMenuButton as-child :is-active="false">
-                <a :href="item.url" class="flex gap-2 items-center">
+                <NuxtLink :to="item.url" class="flex gap-2 items-center">
                   <component :is="item.icon" v-if="item.icon" />
                   {{ item.title }}
-                </a>
+                </NuxtLink>
               </SidebarMenuButton>
             </SidebarMenuItem>
           </SidebarMenu>

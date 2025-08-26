@@ -1,4 +1,8 @@
 <script setup>
+definePageMeta({
+  breadcrumb: `Report`,
+  title: "Report",
+});
 const route = useRoute();
 </script>
 <template>

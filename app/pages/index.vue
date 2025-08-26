@@ -12,6 +12,11 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+
+definePageMeta({
+  breadcrumb: "Dashboard",
+  title: "Dashboard",
+});
 </script>
 <template>
   <ScrollArea class="w-full h-full">

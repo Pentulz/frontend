@@ -1,3 +1,9 @@
+<script setup>
+definePageMeta({
+  breadcrumb: "Reports",
+  title: "Reports",
+});
+</script>
 <template>
   <div>
     <h1

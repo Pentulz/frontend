@@ -1,4 +1,6 @@
-<script setup></script>
+<script setup>
+const { breadcrumbs } = useBreadcrumbs();
+</script>
 
 <template>
   <SidebarProvider>
@@ -11,15 +13,23 @@
         <Separator orientation="vertical" class="mr-2 h-4" />
         <Breadcrumb>
           <BreadcrumbList>
-            <BreadcrumbItem class="hidden md:block">
-              <BreadcrumbLink href="#">
-                Building Your Application
-              </BreadcrumbLink>
-            </BreadcrumbItem>
-            <BreadcrumbSeparator class="hidden md:block" />
-            <BreadcrumbItem>
-              <BreadcrumbPage>Data Fetching</BreadcrumbPage>
-            </BreadcrumbItem>
+            <template
+              v-for="crumb in breadcrumbs"
+              :key="crumb.name + crumb.path || ''"
+            >
+              <template v-if="crumb.path">
+                <BreadcrumbItem class="hidden md:block">
+                  <BreadcrumbLink as-child>
+                    <NuxtLink :to="crumb.path">{{ crumb.name }}</NuxtLink>
+                  </BreadcrumbLink>
+                </BreadcrumbItem>
+                <BreadcrumbSeparator class="hidden md:block" />
+              </template>
+
+              <BreadcrumbItem v-else>
+                <BreadcrumbPage>{{ crumb.name }}</BreadcrumbPage>
+              </BreadcrumbItem>
+            </template>
           </BreadcrumbList>
         </Breadcrumb>
       </header>
