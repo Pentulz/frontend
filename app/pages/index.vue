@@ -17,6 +17,10 @@ definePageMeta({
   breadcrumb: "Dashboard",
   title: "Dashboard",
 });
+
+useHead({
+  title: "Dashboard",
+});
 </script>
 <template>
   <ScrollArea class="w-full h-full">

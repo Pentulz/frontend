@@ -3,6 +3,10 @@ definePageMeta({
   breadcrumb: `Agent`,
   title: "Agent",
 });
+
+useHead({
+  title: "Agent",
+});
 const route = useRoute();
 </script>
 <template>

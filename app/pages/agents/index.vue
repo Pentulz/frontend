@@ -3,6 +3,10 @@ definePageMeta({
   breadcrumb: "Agents",
   title: "Agents",
 });
+
+useHead({
+  title: "Agents",
+});
 </script>
 <template>
   <div>
