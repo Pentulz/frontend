@@ -14,23 +14,16 @@ import {
 } from "@/components/ui/card";
 </script>
 <template>
-  <div class="flex flex-col">
-    <ScrollArea class="w-screen h-screen">
-      <div class="grid grid-cols-4 w-screen p-16 gap-16">
-        <Card v-for="n in 100" :key="n">
-          <CardHeader>
-            <CardTitle>Card Title {{ n }}</CardTitle>
-            <CardDescription>Card Description</CardDescription>
-          </CardHeader>
-          <CardContent> Card Content </CardContent>
-          <CardFooter> Card Footer </CardFooter>
-        </Card>
-      </div>
-    </ScrollArea>
-    <h1
-      class="text-red-500 text-7xl font-semibold absolute flex items-center justify-center inset-0 pointer-events-none"
-    >
-      Dashboard
-    </h1>
-  </div>
+  <ScrollArea class="w-full h-full">
+    <div class="grid grid-cols-4 p-16 gap-16">
+      <Card v-for="n in 100" :key="n">
+        <CardHeader>
+          <CardTitle>Card Title {{ n }}</CardTitle>
+          <CardDescription>Card Description</CardDescription>
+        </CardHeader>
+        <CardContent> Card Content </CardContent>
+        <CardFooter> Card Footer </CardFooter>
+      </Card>
+    </div>
+  </ScrollArea>
 </template>
