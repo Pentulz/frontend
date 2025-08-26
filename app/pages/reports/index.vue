@@ -1,11 +1,11 @@
 <script setup>
 definePageMeta({
-  breadcrumb: "Agents",
-  title: "Agents",
+  breadcrumb: "Reports",
+  title: "Reports",
 });
 
 useHead({
-  title: "Agents",
+  title: "Reports",
 });
 </script>
 <template>
@@ -13,7 +13,7 @@ useHead({
     <h1
       class="text-red-500 text-7xl font-semibold absolute flex items-center justify-center inset-0"
     >
-      Agents
+      Reports
     </h1>
   </div>
 </template>
