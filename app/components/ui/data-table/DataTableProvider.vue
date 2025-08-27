@@ -1,10 +1,15 @@
 <script setup lang="ts" generic="TData, TValue">
-import type { ColumnDef, SortingState } from "@tanstack/vue-table";
+import type {
+  ColumnDef,
+  ColumnFiltersState,
+  SortingState,
+} from "@tanstack/vue-table";
 
 import {
   getCoreRowModel,
   useVueTable,
   getPaginationRowModel,
+  getFilteredRowModel,
   getSortedRowModel,
 } from "@tanstack/vue-table";
 import { valueUpdater } from "~/lib/utils";
@@ -17,6 +22,7 @@ const props = defineProps<{
 }>();
 
 const sorting = ref<SortingState>([]);
+const columnFilters = ref<ColumnFiltersState>([]);
 
 const table = useVueTable({
   get data() {
@@ -29,9 +35,15 @@ const table = useVueTable({
   getPaginationRowModel: getPaginationRowModel(),
   getSortedRowModel: getSortedRowModel(),
   onSortingChange: (updaterOrValue) => valueUpdater(updaterOrValue, sorting),
+  onColumnFiltersChange: (updaterOrValue) =>
+    valueUpdater(updaterOrValue, columnFilters),
+  getFilteredRowModel: getFilteredRowModel(),
   state: {
     get sorting() {
       return sorting.value;
+    },
+    get columnFilters() {
+      return columnFilters.value;
     },
   },
 });
