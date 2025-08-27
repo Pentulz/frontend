@@ -1,12 +1,12 @@
 import { h } from "vue";
 import type { Agent } from ".";
 import type { ColumnDef } from "@tanstack/vue-table";
-import { Badge } from "~/components/ui/badge";
 import { Button } from "../ui/button";
-import { CircleCheckBigIcon, ContainerIcon, EyeIcon } from "lucide-vue-next";
+import { ContainerIcon, EyeIcon } from "lucide-vue-next";
 import { NuxtLink } from "#components";
 import Header from "../ui/data-table/SortableHeader.vue";
 import CapabilitiesCell from "./CapabilitiesCell.vue";
+import StatusCell from "./StatusCell.vue";
 
 export const columns: ColumnDef<Agent>[] = [
   {
@@ -28,10 +28,7 @@ export const columns: ColumnDef<Agent>[] = [
     header: ({ column }) =>
       h(Header<Agent, unknown>, { column }, () => "Status"),
     cell: ({ row }) =>
-      h(Badge, { variant: "default" }, () => [
-        h(CircleCheckBigIcon, { class: "h-4 w-auto" }),
-        row.getValue("status"),
-      ]),
+      h(StatusCell, { status: row.getValue<string>("status") }),
   },
   {
     accessorKey: "type",
