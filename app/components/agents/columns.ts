@@ -2,11 +2,12 @@ import { h } from "vue";
 import type { Agent } from ".";
 import type { ColumnDef } from "@tanstack/vue-table";
 import { Button } from "../ui/button";
-import { ContainerIcon, EyeIcon } from "lucide-vue-next";
+import { EyeIcon } from "lucide-vue-next";
 import { NuxtLink } from "#components";
 import Header from "../ui/data-table/SortableHeader.vue";
 import CapabilitiesCell from "./CapabilitiesCell.vue";
 import StatusCell from "./StatusCell.vue";
+import TypeCell from "./TypeCell.vue";
 
 export const columns: ColumnDef<Agent>[] = [
   {
@@ -33,11 +34,7 @@ export const columns: ColumnDef<Agent>[] = [
   {
     accessorKey: "type",
     header: ({ column }) => h(Header<Agent, unknown>, { column }, () => "Type"),
-    cell: ({ row }) =>
-      h("div", { class: "flex flex-row gap-2 items-center" }, [
-        h(ContainerIcon, { class: "h-4 w-auto" }),
-        h("span", row.getValue("type")),
-      ]),
+    cell: ({ row }) => h(TypeCell, { type: row.getValue<string>("type") }),
   },
   {
     accessorKey: "ip",
