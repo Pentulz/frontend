@@ -1,13 +1,11 @@
 import { h } from "vue";
 import type { Agent } from ".";
 import type { ColumnDef } from "@tanstack/vue-table";
-import { Button } from "../ui/button";
-import { EyeIcon } from "lucide-vue-next";
-import { NuxtLink } from "#components";
 import Header from "../ui/data-table/SortableHeader.vue";
 import CapabilitiesCell from "./CapabilitiesCell.vue";
 import StatusCell from "./StatusCell.vue";
 import TypeCell from "./TypeCell.vue";
+import ActionsCell from "./ActionsCell.vue";
 
 export const columns: ColumnDef<Agent>[] = [
   {
@@ -71,20 +69,6 @@ export const columns: ColumnDef<Agent>[] = [
   {
     accessorKey: "actions",
     header: () => h("div", { class: "text-right" }, "Actions"),
-    cell: ({ row }) =>
-      h(
-        "div",
-        { class: "flex flex-row justify-end" },
-        h(
-          Button,
-          { class: "", variant: "ghost", size: "icon", "as-child": true },
-          () =>
-            h(
-              NuxtLink,
-              { to: `/agents/${row.original.id}`, "as-child": true },
-              () => h(EyeIcon, { class: "h-5 w-auto" }),
-            ),
-        ),
-      ),
+    cell: ({ row }) => h(ActionsCell, { row }),
   },
 ];
