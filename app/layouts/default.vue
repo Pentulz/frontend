@@ -5,7 +5,7 @@ const { breadcrumbs } = useBreadcrumbs();
 <template>
   <SidebarProvider>
     <AppSidebar />
-    <SidebarInset class="flex flex-col h-screen">
+    <SidebarInset class="flex flex-col h-dvh">
       <header
         class="flex sticky top-0 bg-background h-16 shrink-0 items-center gap-2 border-b px-4 z-10"
       >
@@ -33,7 +33,9 @@ const { breadcrumbs } = useBreadcrumbs();
           </BreadcrumbList>
         </Breadcrumb>
       </header>
-      <slot />
+      <ScrollArea class="flex-1 min-h-0">
+        <slot />
+      </ScrollArea>
     </SidebarInset>
   </SidebarProvider>
 </template>

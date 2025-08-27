@@ -21,13 +21,15 @@ const { table } = useDataTable();
 </script>
 
 <template>
-  <div class="flex items-center justify-between px-2">
+  <div
+    class="flex flex-col lg:flex-row items-center justify-between lg:px-2 gap-2"
+  >
     <div class="flex-1 text-sm text-muted-foreground">
       {{ table.getFilteredSelectedRowModel().rows.length }} of
       {{ table.getFilteredRowModel().rows.length }} row(s) selected.
     </div>
-    <div class="flex items-center space-x-6 lg:space-x-8">
-      <div class="flex items-center space-x-2">
+    <div class="flex items-center flex-col lg:flex-row gap-6 lg:gap-8">
+      <div class="flex items-center gap-2">
         <p class="text-sm font-medium">Rows per page</p>
         <Select
           :model-value="`${table.getState().pagination.pageSize}`"
@@ -49,49 +51,51 @@ const { table } = useDataTable();
           </SelectContent>
         </Select>
       </div>
-      <div
-        class="flex w-[100px] items-center justify-center text-sm font-medium"
-      >
-        Page {{ table.getState().pagination.pageIndex + 1 }} of
-        {{ table.getPageCount() }}
-      </div>
-      <div class="flex items-center space-x-2">
-        <Button
-          variant="outline"
-          class="hidden w-8 h-8 p-0 lg:flex"
-          :disabled="!table.getCanPreviousPage()"
-          @click="table.setPageIndex(0)"
+      <div class="flex items-center gap-6 lg:gap-8">
+        <div
+          class="flex lg:w-[100px] items-center justify-center text-sm font-medium"
         >
-          <span class="sr-only">Go to first page</span>
-          <ChevronsLeftIcon class="w-4 h-4" />
-        </Button>
-        <Button
-          variant="outline"
-          class="w-8 h-8 p-0"
-          :disabled="!table.getCanPreviousPage()"
-          @click="table.previousPage()"
-        >
-          <span class="sr-only">Go to previous page</span>
-          <ChevronLeftIcon class="w-4 h-4" />
-        </Button>
-        <Button
-          variant="outline"
-          class="w-8 h-8 p-0"
-          :disabled="!table.getCanNextPage()"
-          @click="table.nextPage()"
-        >
-          <span class="sr-only">Go to next page</span>
-          <ChevronRightIcon class="w-4 h-4" />
-        </Button>
-        <Button
-          variant="outline"
-          class="hidden w-8 h-8 p-0 lg:flex"
-          :disabled="!table.getCanNextPage()"
-          @click="table.setPageIndex(table.getPageCount() - 1)"
-        >
-          <span class="sr-only">Go to last page</span>
-          <ChevronsRightIcon class="w-4 h-4" />
-        </Button>
+          Page {{ table.getState().pagination.pageIndex + 1 }} of
+          {{ table.getPageCount() }}
+        </div>
+        <div class="flex items-center space-x-2">
+          <Button
+            variant="outline"
+            class="hidden w-8 h-8 p-0 lg:flex"
+            :disabled="!table.getCanPreviousPage()"
+            @click="table.setPageIndex(0)"
+          >
+            <span class="sr-only">Go to first page</span>
+            <ChevronsLeftIcon class="w-4 h-4" />
+          </Button>
+          <Button
+            variant="outline"
+            class="w-8 h-8 p-0"
+            :disabled="!table.getCanPreviousPage()"
+            @click="table.previousPage()"
+          >
+            <span class="sr-only">Go to previous page</span>
+            <ChevronLeftIcon class="w-4 h-4" />
+          </Button>
+          <Button
+            variant="outline"
+            class="w-8 h-8 p-0"
+            :disabled="!table.getCanNextPage()"
+            @click="table.nextPage()"
+          >
+            <span class="sr-only">Go to next page</span>
+            <ChevronRightIcon class="w-4 h-4" />
+          </Button>
+          <Button
+            variant="outline"
+            class="hidden w-8 h-8 p-0 lg:flex"
+            :disabled="!table.getCanNextPage()"
+            @click="table.setPageIndex(table.getPageCount() - 1)"
+          >
+            <span class="sr-only">Go to last page</span>
+            <ChevronsRightIcon class="w-4 h-4" />
+          </Button>
+        </div>
       </div>
     </div>
   </div>
