@@ -1,6 +1,6 @@
-<script setup>
+<script setup lang="ts">
+import type { Agent } from "~/components/agents";
 import { PlusIcon } from "lucide-vue-next";
-
 definePageMeta({
   breadcrumb: "Agents",
   title: "Agents",
@@ -9,6 +9,22 @@ definePageMeta({
 useHead({
   title: "Agents",
 });
+</script>
+
+<script lang="ts">
+// Data
+const agents: Agent[] = [
+  {
+    id: "agent-007",
+    name: "James Bond",
+    status: "Online",
+    type: "Container",
+    os: "Ubuntu 24.04",
+    ip: "10.0.0.7",
+    capabilities: ["nmap", "tcpdump", "nikto"],
+    jobs: 12,
+  },
+];
 </script>
 <template>
   <div class="flex flex-col w-full gap-4 p-4">
@@ -26,5 +42,6 @@ useHead({
     </div>
 
     <!-- Table space -->
+    <AgentsTable :agents="agents" />
   </div>
 </template>
