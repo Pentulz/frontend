@@ -5,11 +5,14 @@ import { Badge } from "~/components/ui/badge";
 import { Button } from "../ui/button";
 import { CircleCheckBigIcon, ContainerIcon, EyeIcon } from "lucide-vue-next";
 import { NuxtLink } from "#components";
+import Header from "../ui/data-table/SortableHeader.vue";
+import CapabilitiesCell from "./CapabilitiesCell.vue";
 
 export const columns: ColumnDef<Agent>[] = [
   {
     accessorKey: "name",
-    header: () => h("div", { class: "" }, "Agent Name"),
+    header: ({ column }) =>
+      h(Header<Agent, unknown>, { column }, () => "Agent name"),
     cell: ({ row }) =>
       h("div", { class: "flex flex-col" }, [
         h("p", { class: "text-sm font-medium" }, row.getValue("name")),
@@ -22,7 +25,8 @@ export const columns: ColumnDef<Agent>[] = [
   },
   {
     accessorKey: "status",
-    header: () => "Status",
+    header: ({ column }) =>
+      h(Header<Agent, unknown>, { column }, () => "Status"),
     cell: ({ row }) =>
       h(Badge, { variant: "default" }, () => [
         h(CircleCheckBigIcon, { class: "h-4 w-auto" }),
@@ -31,7 +35,7 @@ export const columns: ColumnDef<Agent>[] = [
   },
   {
     accessorKey: "type",
-    header: () => "Type",
+    header: ({ column }) => h(Header<Agent, unknown>, { column }, () => "Type"),
     cell: ({ row }) =>
       h("div", { class: "flex flex-row gap-2 items-center" }, [
         h(ContainerIcon, { class: "h-4 w-auto" }),
@@ -40,36 +44,53 @@ export const columns: ColumnDef<Agent>[] = [
   },
   {
     accessorKey: "ip",
-    header: () => h("div", { class: "" }, "IP Address"),
+    header: ({ column }) =>
+      h(Header<Agent, unknown>, { column }, () => "IP Address"),
     cell: ({ row }) =>
       h("div", { class: "flex flex-col" }, [
-        h("p", { class: "text-sm font-medium" }, row.getValue("name")),
+        h("p", { class: "text-sm font-medium" }, row.getValue("ip")),
         h(
           "span",
           { class: "text-sm font-medium text-muted-foreground" },
-          row.original.id,
+          row.original.os,
         ),
       ]),
   },
   {
+    accessorKey: "capabilities",
+    header: () => "Capabilities",
+    cell: ({ row }) =>
+      h(CapabilitiesCell, {
+        capabilities: row.getValue<string[]>("capabilities"),
+      }),
+  },
+  {
     accessorKey: "jobs",
-    header: () => h("div", { class: "text-right" }, "Jobs"),
+    header: ({ column }) =>
+      h(
+        Header<Agent, unknown>,
+        { class: "text-right justify-end", column },
+        () => "Jobs",
+      ),
     cell: ({ row }) => h("div", { class: "text-right" }, row.getValue("jobs")),
   },
   {
     accessorKey: "actions",
     header: () => h("div", { class: "text-right" }, "Actions"),
     cell: ({ row }) =>
-      h("div", { class: "flex flex-row justify-end" }, [
+      h(
+        "div",
+        { class: "flex flex-row justify-end" },
         h(
           Button,
           { class: "", variant: "ghost", size: "icon", "as-child": true },
-          h(
-            NuxtLink,
-            { to: `/agents/${row.original.id}`, "as-child": true },
-            h(EyeIcon, { class: "h-5 w-auto" }),
-          ),
+          () =>
+            h(
+              NuxtLink,
+              { to: `/agents/${row.original.id}`, "as-child": true },
+              () => h(EyeIcon, { class: "h-5 w-auto" }),
+            ),
         ),
-      ]),
+      ),
   },
 ];
