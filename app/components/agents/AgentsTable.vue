@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { Agent } from ".";
-import DataTable from "../ui/data-table/DataTable.vue";
+import { DataTableProvider, DataTable } from "../ui/data-table";
 import { columns } from "./columns";
 type Props = {
   agents: Agent[];
@@ -9,5 +9,7 @@ type Props = {
 const { agents } = defineProps<Props>();
 </script>
 <template>
-  <DataTable :columns="columns" :data="agents" />
+  <DataTableProvider :columns="columns" :data="agents">
+    <DataTable />
+  </DataTableProvider>
 </template>
