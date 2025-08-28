@@ -8,7 +8,7 @@ import {
 import { Card, CardHeader, CardTitle, CardContent } from "#components";
 import { FileChartColumnIcon } from "lucide-vue-next";
 import { columns } from "./columns";
-// import JobFilters from "./JobFilters.vue";
+import ReportFilters from "./ReportFilters.vue";
 
 type Props = {
   reports: Report[];
@@ -18,7 +18,7 @@ const { reports } = defineProps<Props>();
 </script>
 <template>
   <DataTableProvider :columns="columns" :data="reports">
-    <!-- <JobFilters /> -->
+    <ReportFilters />
     <Card>
       <CardHeader>
         <CardTitle class="flex flex-row gap-2 items-center"
