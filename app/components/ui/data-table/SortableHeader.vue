@@ -1,4 +1,4 @@
-<script setup lang="ts" generic="TData, TValue">
+<script setup lang="ts" generic="TData = unknown, TValue = unknown">
 import type { Column } from "@tanstack/vue-table";
 import type { HTMLAttributes } from "vue";
 import { ArrowUpDownIcon, ArrowUpIcon, ArrowDownIcon } from "lucide-vue-next";
