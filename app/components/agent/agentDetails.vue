@@ -1,0 +1,104 @@
+<script setup lang="ts">
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardContent,
+  Separator,
+  Badge,
+} from "#components";
+import { ServerIcon } from "lucide-vue-next";
+
+export type Props = {
+  description: string;
+  type: string;
+  os: string;
+  ip: string;
+  uptime: string;
+  lastSeen: Date;
+};
+
+const props = defineProps<Props>();
+</script>
+
+<template>
+  <Card>
+    <CardHeader>
+      <CardTitle class="flex flex-row gap-2">
+        <ServerIcon class="w-5" />
+        <span>Agent details</span>
+      </CardTitle>
+    </CardHeader>
+
+    <CardContent class="flex flex-col gap-3">
+
+      <div class="flex flex-col gap-2">
+        <p class="text-sm leading-5 font-medium text-neutral-500">
+          Description
+        </p>
+        <p class="text-base leading-6 font-normal">{{ props.description }}</p>
+      </div>
+
+      <Separator />
+
+      <div class="grid grid-cols-1 2xl:grid-cols-2 gap-3">
+        <div class="flex flex-col gap-3">
+          <p class="text-sm leading-5 font-medium text-neutral-500">
+            System Information
+          </p>
+          <div class="flex flex-col gap-2">
+
+            <div class="flex flex-row gap-2 justify-between items-center">
+              <p class="text-sm leading-5 font-medium text-neutral-500">
+                Type:
+              </p>
+              <Badge variant="outline">{{ props.type }}</Badge>
+            </div>
+
+            <div class="flex flex-row justify-between items-center">
+              <p class="text-sm leading-5 font-medium text-neutral-500">
+                OS:
+              </p>
+              <p class="text-sm leading-5 font-normal">{{ props.os }}</p>
+            </div>
+          </div>
+        </div>
+        <div class="flex flex-col gap-3">
+          <p class="text-sm leading-5 font-medium text-neutral-500">
+            Network & Status
+          </p>
+          <div class="flex flex-col gap-3">
+            <!-- IP Address -->
+            <div class="flex flex-row justify-between items-center">
+              <p class="text-sm leading-5 font-medium text-neutral-500">
+                IP Address:
+              </p>
+              <p class="text-sm leading-5 font-normal">{{ props.ip }}</p>
+            </div>
+            <!-- Uptime -->
+            <div class="flex flex-row justify-between items-center">
+              <p class="text-sm leading-5 font-medium text-neutral-500">
+                Uptime:
+              </p>
+              <p class="text-sm leading-5 font-normal">{{ props.uptime }}</p>
+            </div>
+            <!-- Last Seen -->
+            <div class="flex flex-row justify-between items-center">
+              <p class="text-sm leading-5 font-medium text-neutral-500">
+                Last Seen:
+              </p>
+              <p class="text-sm leading-5 font-normal">
+                trkl
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <Separator />
+
+    
+      
+    </CardContent>
+  </Card>
+</template>
