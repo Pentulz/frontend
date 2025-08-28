@@ -1,5 +1,6 @@
-<script setup>
+<script setup lang="ts">
 import { PlusIcon } from "lucide-vue-next";
+import { agents } from "./data";
 
 definePageMeta({
   breadcrumb: "Agents",
@@ -10,6 +11,7 @@ useHead({
   title: "Agents",
 });
 </script>
+
 <template>
   <div class="flex flex-col w-full gap-4 p-4">
     <div class="flex flex-col lg:flex-row w-full gap-4 lg:justify-between">
@@ -26,5 +28,6 @@ useHead({
     </div>
 
     <!-- Table space -->
+    <AgentsTable :agents="agents" />
   </div>
 </template>
