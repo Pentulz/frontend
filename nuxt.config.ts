@@ -10,6 +10,7 @@ export default defineNuxtConfig({
     "@vueuse/nuxt",
     "@nuxtjs/sitemap",
     "@nuxtjs/robots",
+    "@nuxtjs/google-fonts",
   ],
   ssr: true,
   css: ["~/assets/css/tailwind.css"],
@@ -30,5 +31,20 @@ export default defineNuxtConfig({
   site: {
     url: "https://pentulz.xyz/",
     name: "Pentulz",
+  },
+  runtimeConfig: {
+    public: {
+      apiBase: "http://localhost:8000",
+    },
+  },
+  googleFonts: {
+    families: {
+      Geist: {
+        wght: [400, 500, 700],
+      },
+      "JetBrains Mono": {
+        wght: [400, 500, 700],
+      },
+    },
   },
 });
