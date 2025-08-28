@@ -33,6 +33,7 @@ export const columns: ColumnDef<Agent>[] = [
     accessorKey: "type",
     header: ({ column }) => h(Header<Agent, unknown>, { column }, () => "Type"),
     cell: ({ row }) => h(TypeCell, { type: row.getValue<string>("type") }),
+    filterFn: "arrIncludesSome",
   },
   {
     accessorKey: "ip",
@@ -55,6 +56,8 @@ export const columns: ColumnDef<Agent>[] = [
       h(CapabilitiesCell, {
         capabilities: row.getValue<string[]>("capabilities"),
       }),
+    getUniqueValues: (row) => row.capabilities ?? [],
+    filterFn: "arrIncludesAll",
   },
   {
     accessorKey: "jobs",

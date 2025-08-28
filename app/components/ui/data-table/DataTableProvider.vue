@@ -11,6 +11,8 @@ import {
   getPaginationRowModel,
   getFilteredRowModel,
   getSortedRowModel,
+  getFacetedRowModel,
+  getFacetedUniqueValues,
 } from "@tanstack/vue-table";
 import { valueUpdater } from "~/lib/utils";
 
@@ -38,6 +40,8 @@ const table = useVueTable({
   onColumnFiltersChange: (updaterOrValue) =>
     valueUpdater(updaterOrValue, columnFilters),
   getFilteredRowModel: getFilteredRowModel(),
+  getFacetedRowModel: getFacetedRowModel(),
+  getFacetedUniqueValues: getFacetedUniqueValues(),
   state: {
     get sorting() {
       return sorting.value;
