@@ -23,6 +23,7 @@ export const columns: ColumnDef<Job>[] = [
       h(SortableHeader<Job, unknown>, { column }, () => "Status"),
     cell: ({ row }) =>
       h(StatusCell, { status: row.getValue<string>("status") }),
+    filterFn: "arrIncludesSome",
   },
   {
     accessorKey: "agentId",
@@ -30,6 +31,7 @@ export const columns: ColumnDef<Job>[] = [
       h(SortableHeader<Job, unknown>, { column }, () => "Agent"),
     cell: ({ row }) =>
       h(AgentCell, { agentId: row.getValue<string>("agentId") }),
+    filterFn: "arrIncludesSome",
   },
   {
     accessorKey: "tools",
