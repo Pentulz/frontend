@@ -1,5 +1,6 @@
 <script setup>
 import { PlayIcon } from "lucide-vue-next";
+import { data } from "./data";
 definePageMeta({
   breadcrumb: "Jobs",
   title: "Jobs",
@@ -25,5 +26,6 @@ useHead({
     </div>
 
     <!-- Table space -->
+    <JobsTable :jobs="data" />
   </div>
 </template>
