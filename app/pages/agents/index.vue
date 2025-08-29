@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { PlusIcon } from "lucide-vue-next";
-import { agents } from "./data";
+import { agents } from "~/assets/data/agents";
 
 definePageMeta({
   breadcrumb: "Agents",
