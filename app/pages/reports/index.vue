@@ -1,6 +1,6 @@
 <script setup>
 import { PlusIcon } from "lucide-vue-next";
-import { data } from "./data";
+import { data } from "~/assets/data/reports";
 definePageMeta({
   breadcrumb: "Reports",
   title: "Reports",
