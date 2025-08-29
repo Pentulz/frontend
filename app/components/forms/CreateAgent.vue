@@ -47,29 +47,32 @@ const form = useForm({
 
 const body = ref<Body | null>(null);
 
-const submitRequest = useFetch<Response, ClientError>(
-  `${apiBase}/api/v1/agents`,
-  {
-    server: false,
-    immediate: false,
-    watch: false,
-    method: "POST",
-    body: body,
-  },
-);
+const submitRequest = useFetch<Response, ClientError>("/api/v1/agents", {
+  server: false,
+  immediate: false,
+  watch: false,
+  method: "POST",
+  baseURL: apiBase,
+  body: body,
+});
 
 const onSubmit = form.handleSubmit(async (values) => {
   submitRequest.clear();
   body.value = values;
   await submitRequest.execute();
+
   if (submitRequest.status.value === "success") {
     toast.success("Successfully created agent");
     open.value = false;
     navigateTo(`/agents/${submitRequest.data.value?.data.id}`);
-  } else {
-    toast.error("An error occurred");
-    console.error(submitRequest.error.value);
+    return;
   }
+
+  submitRequest.error.value?.data?.errors.forEach((err) =>
+    toast.error(err.status, { description: err.title }),
+  );
+
+  console.error(submitRequest.error.value?.data);
 });
 </script>
 <template>
