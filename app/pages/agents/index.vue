@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { agents } from "./data";
 import { CreateAgent } from "~/components/forms";
 
 definePageMeta({
@@ -25,6 +24,6 @@ useHead({
     </div>
 
     <!-- Table space -->
-    <AgentsTable :agents="agents" />
+    <AgentsTable />
   </div>
 </template>

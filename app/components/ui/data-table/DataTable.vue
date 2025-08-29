@@ -1,6 +1,7 @@
 <script setup lang="ts" generic="TData, TValue">
 import { FlexRender } from "@tanstack/vue-table";
 import { useDataTable } from "./keys";
+import { Skeleton } from "~/components/ui/skeleton";
 
 import {
   Table,
@@ -10,6 +11,12 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+
+type Props = {
+  pending?: boolean;
+};
+
+const { pending = false } = defineProps<Props>();
 
 const { table, columns } = useDataTable<TData, TValue>();
 </script>
@@ -32,27 +39,49 @@ const { table, columns } = useDataTable<TData, TValue>();
         </TableRow>
       </TableHeader>
       <TableBody>
-        <template v-if="table.getRowModel().rows?.length">
-          <TableRow
-            v-for="row in table.getRowModel().rows"
-            :key="row.id"
-            :data-state="row.getIsSelected() ? 'selected' : undefined"
-          >
-            <TableCell v-for="cell in row.getVisibleCells()" :key="cell.id">
-              <FlexRender
-                :render="cell.column.columnDef.cell"
-                :props="cell.getContext()"
-              />
-            </TableCell>
-          </TableRow>
-        </template>
-        <template v-else>
-          <TableRow>
-            <TableCell :colspan="columns.length" class="h-24 text-center">
-              No results.
-            </TableCell>
-          </TableRow>
-        </template>
+        <ClientOnly>
+          <template v-if="table.getRowModel().rows?.length">
+            <TableRow
+              v-for="row in table.getRowModel().rows"
+              :key="row.id"
+              :data-state="row.getIsSelected() ? 'selected' : undefined"
+            >
+              <TableCell v-for="cell in row.getVisibleCells()" :key="cell.id">
+                <FlexRender
+                  :render="cell.column.columnDef.cell"
+                  :props="cell.getContext()"
+                />
+              </TableCell>
+            </TableRow>
+          </template>
+          <template v-else-if="pending">
+            <TableRow
+              v-for="row in table.getState().pagination.pageSize"
+              :key="row"
+            >
+              <TableCell :colspan="columns.length" class="h-12 text-center">
+                <Skeleton class="w-full h-full" />
+              </TableCell>
+            </TableRow>
+          </template>
+          <template v-else>
+            <TableRow>
+              <TableCell :colspan="columns.length" class="h-24 text-center">
+                No results.
+              </TableCell>
+            </TableRow>
+          </template>
+          <template #fallback>
+            <TableRow
+              v-for="row in table.getState().pagination.pageSize"
+              :key="row"
+            >
+              <TableCell :colspan="columns.length" class="h-12 text-center">
+                <Skeleton class="w-full h-full" />
+              </TableCell>
+            </TableRow>
+          </template>
+        </ClientOnly>
       </TableBody>
     </Table>
   </div>

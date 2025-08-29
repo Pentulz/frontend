@@ -1,5 +1,9 @@
 <script setup lang="ts">
-import type { SuccessResponse, ClientError } from "~/lib/api";
+import {
+  isSingleDocumentOf,
+  type ClientError,
+  type JsonDocument,
+} from "~/lib/api";
 import {
   Dialog,
   DialogTrigger,
@@ -24,8 +28,6 @@ import * as z from "zod";
 import { useForm } from "vee-validate";
 import { toast } from "vue-sonner";
 
-type Response = SuccessResponse<unknown, "agents">;
-
 const {
   public: { apiBase },
 } = useRuntimeConfig();
@@ -47,7 +49,7 @@ const form = useForm({
 
 const body = ref<Body | null>(null);
 
-const submitRequest = useFetch<Response, ClientError>("/api/v1/agents", {
+const submitRequest = useFetch<JsonDocument, ClientError>("/api/v1/agents", {
   server: false,
   immediate: false,
   watch: false,
@@ -57,22 +59,38 @@ const submitRequest = useFetch<Response, ClientError>("/api/v1/agents", {
 });
 
 const onSubmit = form.handleSubmit(async (values) => {
-  submitRequest.clear();
+  const { clear, execute } = submitRequest;
+  clear();
   body.value = values;
-  await submitRequest.execute();
+  await execute();
 
-  if (submitRequest.status.value === "success") {
+  const {
+    status: { value: status },
+    data: { value: data },
+    error: { value: error },
+  } = submitRequest;
+
+  if (status === "success" && data) {
+    if (!isSingleDocumentOf(data, "agents")) {
+      toast.error("Unexpected response");
+      console.error("Expected a document, got the following instead");
+      console.error(data);
+      return;
+    }
+
     toast.success("Successfully created agent");
     open.value = false;
-    navigateTo(`/agents/${submitRequest.data.value?.data.id}`);
+    navigateTo(`/agents/${data.data.id}`);
     return;
   }
 
-  submitRequest.error.value?.data?.errors.forEach((err) =>
-    toast.error(err.status, { description: err.title }),
-  );
+  if (error) {
+    error.data?.errors.forEach((err) =>
+      toast.error(err.status, { description: err.title }),
+    );
 
-  console.error(submitRequest.error.value?.data);
+    console.error(error.data);
+  }
 });
 </script>
 <template>
