@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { PlusIcon } from "lucide-vue-next";
 import { agents } from "./data";
+import { CreateAgent } from "~/components/forms";
 
 definePageMeta({
   breadcrumb: "Agents",
@@ -21,10 +21,7 @@ useHead({
           >Manage and monitor all the agents</span
         >
       </div>
-      <Button variant="outline">
-        <PlusIcon class="h-6 w-auto" />
-        <span>Add New Agent</span>
-      </Button>
+      <CreateAgent />
     </div>
 
     <!-- Table space -->
