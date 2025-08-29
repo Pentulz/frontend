@@ -9,7 +9,7 @@ interface Props {
   class?: HTMLAttributes["class"];
 }
 
-const { column, ...rest } = defineProps<Props>();
+const { column, class: className = undefined } = defineProps<Props>();
 
 const icon = computed(() => {
   const sort = column.getIsSorted();
@@ -22,7 +22,7 @@ const icon = computed(() => {
 <template>
   <Button
     variant="ghost"
-    :class="cn('w-full items-center justify-start gap-2', rest.class)"
+    :class="cn('w-full items-center justify-start gap-2', className)"
     @click="() => column.toggleSorting(column.getIsSorted() === 'asc')"
   >
     <slot />
