@@ -1,13 +1,12 @@
 import { h } from "vue";
 import type { Job } from ".";
 import type { ColumnDef } from "@tanstack/vue-table";
-import SortableHeader from "~/components/ui/data-table/SortableHeader.vue";
 import ActionsCell from "./ActionsCell.vue";
 import NameCell from "./NameCell.vue";
 import StatusCell from "./StatusCell.vue";
 import AgentCell from "./AgentCell.vue";
 import ToolsCell from "./ToolsCell.vue";
-import DateTimeCell from "./DateTimeCell.vue";
+import { DateTimeCell, SortableHeader } from "~/components/ui/data-table";
 
 export const columns: ColumnDef<Job>[] = [
   {
