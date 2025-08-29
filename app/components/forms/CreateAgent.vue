@@ -30,12 +30,14 @@ const {
   public: { apiBase },
 } = useRuntimeConfig();
 
-const schema = toTypedSchema(
-  z.object({
-    hostname: z.string().min(1).max(50),
-    description: z.string().min(1).max(400),
-  }),
-);
+const bodySchema = z.object({
+  hostname: z.string().min(1).max(50),
+  description: z.string().min(1).max(400),
+});
+
+const schema = toTypedSchema(bodySchema);
+
+type Body = z.infer<typeof bodySchema>;
 
 const open = ref(false);
 
@@ -43,7 +45,7 @@ const form = useForm({
   validationSchema: schema,
 });
 
-const body = ref<{ hostname: string; description: string } | null>(null);
+const body = ref<Body | null>(null);
 
 const submitRequest = useFetch<Response, ClientError>(
   `${apiBase}/api/v1/agents`,
@@ -65,7 +67,7 @@ const onSubmit = form.handleSubmit(async (values) => {
     open.value = false;
     navigateTo(`/agents/${submitRequest.data.value?.data.id}`);
   } else {
-    toast.error("An error occured");
+    toast.error("An error occurred");
     console.error(submitRequest.error.value);
   }
 });
