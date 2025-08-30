@@ -85,11 +85,18 @@ const onSubmit = form.handleSubmit(async (values) => {
   }
 
   if (error) {
-    error.data?.errors.forEach((err) =>
-      toast.error(err.status, { description: err.title }),
-    );
+    if (error.data) {
+      error.data.errors.forEach((err) =>
+        toast.error(err.status, { description: err.title }),
+      );
+      console.error(error.data);
+    }
 
-    console.error(error.data);
+    if (error.statusCode && error.statusCode >= 500) {
+      toast.error("Backend error", {
+        description: `${error.statusCode} ${error.message}`,
+      });
+    }
   }
 });
 </script>

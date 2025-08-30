@@ -19,7 +19,7 @@ import {
   type ClientError,
   isCollectionDocumentOf,
 } from "~/lib/api";
-import { agents } from "~/pages/agents/data";
+import { agents } from "~/assets/data/agents";
 
 const {
   public: { apiBase },
