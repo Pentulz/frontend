@@ -39,7 +39,7 @@ const data = computed(() => {
 
   if (!isCollectionDocumentOf(req.data.value, "agents")) return [];
 
-  // TODO: proprely map the values
+  // TODO: properly map the values
   return agents;
 });
 </script>

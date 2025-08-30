@@ -41,13 +41,12 @@ const schema = toTypedSchema(bodySchema);
 
 type Body = z.infer<typeof bodySchema>;
 
-const open = ref(false);
-
 const form = useForm({
   validationSchema: schema,
 });
 
 const body = ref<Body | null>(null);
+const open = ref(false);
 
 const submitRequest = useFetch<JsonDocument, ClientError>("/api/v1/agents", {
   server: false,
