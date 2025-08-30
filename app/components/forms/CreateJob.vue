@@ -310,123 +310,137 @@ const toolMap = computed<{ [key: string]: SystemTool }>(() =>
             </template>
 
             <template v-else>
-              <FormFieldArray v-slot="{ fields }" name="actions">
-                <FormField name="actions">
-                  <div
-                    v-for="(field, idx) in fields as FieldEntry<{
-                      name: string;
-                      variant?: string;
-                      args: { [key: string]: unknown };
-                    }>[]"
-                    :key="field.key"
-                  >
-                    <FormField :name="`actions[${idx}]`">
-                      <FormItem>
-                        <FormLabel
-                          >Configuration for {{ field.value.name }}</FormLabel
-                        >
-                        <FormControl>
-                          <div
-                            class="border rounded-lg bg-muted px-4 py-3 flex flex-col gap-2"
-                          >
-                            <template v-if="toolMap[field.value.name]">
-                              <!-- Choose Mode/Variant -->
-                              <FormField
-                                v-slot="{ componentField }"
-                                :name="`actions[${idx}].variant`"
-                              >
-                                <FormItem>
-                                  <FormLabel>Mode</FormLabel>
-                                  <FormControl>
-                                    <Select v-bind="componentField">
-                                      <SelectTrigger class="w-full bg-white">
-                                        <SelectValue
-                                          placeholder="Choose a configuration mode"
-                                        />
-                                      </SelectTrigger>
-                                      <SelectContent>
-                                        <SelectItem
-                                          v-for="variant in toolMap[
-                                            field.value.name
-                                          ]?.variants.map(
-                                            (v) => v.description,
-                                          ) ?? []"
-                                          :key="variant"
-                                          :value="variant"
-                                        >
-                                          {{ variant }}
-                                        </SelectItem>
-                                      </SelectContent>
-                                    </Select>
-                                  </FormControl>
-                                </FormItem>
-                              </FormField>
-
-                              <div
-                                v-if="field.value.variant"
-                                class="flex flex-col gap-2"
-                              >
-                                <FormField
-                                  v-for="argDef in toolMap[
-                                    field.value.name
-                                  ]?.variants.find(
-                                    (v) => v.description == field.value.variant,
-                                  )?.argument_definitions"
-                                  :key="argDef.name"
-                                  v-slot="{ componentField }"
-                                  :name="`actions[${idx}].args.${argDef.name}`"
-                                  as-child
-                                >
-                                  <div>
-                                    <FormItem>
-                                      <FormLabel>{{ argDef.name }}</FormLabel>
-                                      <FormControl>
-                                        <Input
-                                          v-if="argDef.type === 'string'"
-                                          type="text"
-                                          v-bind="componentField"
-                                          class="bg-white"
-                                          :placeholder="argDef.placeholder"
-                                          :required="argDef.required"
-                                        />
-                                        <Input
-                                          v-else-if="argDef.type === 'number'"
-                                          type="number"
-                                          class="bg-white"
-                                          v-bind="componentField"
-                                          :placeholder="argDef.placeholder"
-                                          :required="argDef.required"
-                                        />
-                                        <Checkbox
-                                          v-else-if="argDef.type === 'boolean'"
-                                          v-bind="componentField"
-                                          :required="argDef.required"
-                                        />
-                                      </FormControl>
-                                      <FormDescription
-                                        v-if="argDef.description"
-                                        >{{
-                                          argDef.description
-                                        }}</FormDescription
-                                      >
-                                    </FormItem>
-                                  </div>
-                                </FormField>
-                              </div>
-                            </template>
-
-                            <span v-else
-                              >No configuration available for
-                              {{ field.value.name }}</span
+              <ScrollArea class="max-h-[50dvh]">
+                <FormFieldArray v-slot="{ fields }" name="actions">
+                  <div class="flex flex-col gap-4">
+                    <FormField name="actions">
+                      <div
+                        v-for="(field, idx) in fields as FieldEntry<{
+                          name: string;
+                          variant?: string;
+                          args: { [key: string]: unknown };
+                        }>[]"
+                        :key="field.key"
+                      >
+                        <FormField :name="`actions[${idx}]`">
+                          <FormItem>
+                            <FormLabel
+                              >Configuration for
+                              {{ field.value.name }}</FormLabel
                             >
-                          </div>
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
+                            <FormControl>
+                              <div
+                                class="border rounded-lg bg-muted px-4 py-3 flex flex-col gap-2"
+                              >
+                                <template v-if="toolMap[field.value.name]">
+                                  <!-- Choose Mode/Variant -->
+                                  <FormField
+                                    v-slot="{ componentField }"
+                                    :name="`actions[${idx}].variant`"
+                                  >
+                                    <FormItem>
+                                      <FormLabel>Mode</FormLabel>
+                                      <FormControl>
+                                        <Select v-bind="componentField">
+                                          <SelectTrigger
+                                            class="w-full bg-white"
+                                          >
+                                            <SelectValue
+                                              placeholder="Choose a configuration mode"
+                                            />
+                                          </SelectTrigger>
+                                          <SelectContent>
+                                            <SelectItem
+                                              v-for="variant in toolMap[
+                                                field.value.name
+                                              ]?.variants.map(
+                                                (v) => v.description,
+                                              ) ?? []"
+                                              :key="variant"
+                                              :value="variant"
+                                            >
+                                              {{ variant }}
+                                            </SelectItem>
+                                          </SelectContent>
+                                        </Select>
+                                      </FormControl>
+                                    </FormItem>
+                                  </FormField>
+
+                                  <div
+                                    v-if="field.value.variant"
+                                    class="flex flex-col gap-2"
+                                  >
+                                    <FormField
+                                      v-for="argDef in toolMap[
+                                        field.value.name
+                                      ]?.variants.find(
+                                        (v) =>
+                                          v.description == field.value.variant,
+                                      )?.argument_definitions"
+                                      :key="argDef.name"
+                                      v-slot="{ componentField }"
+                                      :name="`actions[${idx}].args.${argDef.name}`"
+                                      as-child
+                                    >
+                                      <div>
+                                        <FormItem>
+                                          <FormLabel>{{
+                                            argDef.name
+                                          }}</FormLabel>
+                                          <FormControl>
+                                            <Input
+                                              v-if="argDef.type === 'string'"
+                                              type="text"
+                                              v-bind="componentField"
+                                              class="bg-white"
+                                              :placeholder="argDef.placeholder"
+                                              :required="argDef.required"
+                                            />
+                                            <Input
+                                              v-else-if="
+                                                argDef.type === 'number'
+                                              "
+                                              type="number"
+                                              class="bg-white"
+                                              v-bind="componentField"
+                                              :placeholder="argDef.placeholder"
+                                              :required="argDef.required"
+                                            />
+                                            <Checkbox
+                                              v-else-if="
+                                                argDef.type === 'boolean'
+                                              "
+                                              v-bind="componentField"
+                                              :required="argDef.required"
+                                            />
+                                          </FormControl>
+                                          <FormDescription
+                                            v-if="argDef.description"
+                                            >{{
+                                              argDef.description
+                                            }}</FormDescription
+                                          >
+                                        </FormItem>
+                                      </div>
+                                    </FormField>
+                                  </div>
+                                </template>
+
+                                <span v-else
+                                  >No configuration available for
+                                  {{ field.value.name }}</span
+                                >
+                              </div>
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        </FormField>
+                      </div>
                     </FormField>
                   </div>
-                </FormField>
-              </FormFieldArray>
+                </FormFieldArray>
+              </ScrollArea>
             </template>
           </div>
 
