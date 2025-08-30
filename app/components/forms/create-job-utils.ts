@@ -10,11 +10,15 @@ const schemas = [
     agent_id: z.string().min(1).max(64),
   }),
   z.object({
-    actions: z.array(z.string().min(1).max(64)).min(1),
+    actions: z.array(z.object({ name: z.string().min(1).max(64) })).min(1),
   }),
   z.object({
-    actions_config: z.array(
-      z.array(z.object({ key: z.string().min(1).max(64), value: z.any() })),
+    actions: z.array(
+      z.object({
+        name: z.string().min(1).max(64),
+        variant: z.string().min(1),
+        args: z.any(),
+      }),
     ),
   }),
 ] as const satisfies readonly z.ZodTypeAny[];

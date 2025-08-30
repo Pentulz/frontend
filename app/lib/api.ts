@@ -23,8 +23,47 @@ export type ClientError = FetchError<{
 // JSON api typing
 type PlatformType = "WINDOWS" | "MACOS" | "LINUX";
 
+type ArgumentTypeMap = {
+  string: string;
+  number: number;
+  boolean: boolean;
+};
+
+type TypedArgumentDefinition<
+  K extends keyof ArgumentTypeMap = keyof ArgumentTypeMap,
+> = {
+  name: string;
+  type: K;
+  required: boolean;
+  description: string;
+  placeholder: string;
+  default_value?: ArgumentTypeMap[K] | null;
+};
+
+type ToolVariant = {
+  args: string[];
+  description: string;
+  argument_definitions: TypedArgumentDefinition[];
+};
+
+export type SystemTool = {
+  name: string;
+  cmd: string;
+  export_format: string;
+  export_arguments: string[];
+  version_arg: string;
+  variants: ToolVariant[];
+};
+
+export type SystemToolCollectionDocument = {
+  data: Array<{
+    type: "tools";
+    attributes: SystemTool;
+  }>;
+};
+
 type ResourceMap = {
-  tool: {
+  tools: {
     cmd: string;
     args: string[];
   } & Partial<{
@@ -40,7 +79,7 @@ type ResourceMap = {
   } & Partial<{
     hostname: string;
     platform: PlatformType;
-    available_tools: Ref<"tool">[];
+    available_tools: Ref<"tools">[];
   }>;
   jobs: {
     id: string;
