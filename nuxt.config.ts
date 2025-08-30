@@ -47,4 +47,7 @@ export default defineNuxtConfig({
       },
     },
   },
+  robots: {
+    robotsTxt: !process.env.NUXT_APP_BASE_URL,
+  },
 });

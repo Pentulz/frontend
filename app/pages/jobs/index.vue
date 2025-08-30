@@ -1,6 +1,6 @@
 <script setup>
 import { PlayIcon } from "lucide-vue-next";
-import { data } from "./data";
+import { data } from "~/assets/data/jobs";
 definePageMeta({
   breadcrumb: "Jobs",
   title: "Jobs",
