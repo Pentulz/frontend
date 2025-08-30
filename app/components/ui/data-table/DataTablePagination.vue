@@ -25,8 +25,12 @@ const { table } = useDataTable();
     class="flex flex-col lg:flex-row items-center justify-between lg:px-2 gap-2"
   >
     <div class="flex-1 text-sm text-muted-foreground">
-      {{ table.getFilteredSelectedRowModel().rows.length }} of
-      {{ table.getFilteredRowModel().rows.length }} row(s) selected.
+      <ClientOnly>
+        {{ table.getFilteredSelectedRowModel().rows.length }} of
+        {{ table.getFilteredRowModel().rows.length }} row(s) selected.
+
+        <template #fallback> 0 of ? row(s) selected. </template>
+      </ClientOnly>
     </div>
     <div class="flex items-center flex-col lg:flex-row gap-6 lg:gap-8">
       <div class="flex items-center gap-2">
@@ -55,46 +59,78 @@ const { table } = useDataTable();
         <div
           class="flex lg:w-[100px] items-center justify-center text-sm font-medium"
         >
-          Page {{ table.getState().pagination.pageIndex + 1 }} of
-          {{ table.getPageCount() }}
+          <ClientOnly>
+            Page {{ table.getState().pagination.pageIndex + 1 }} of
+            {{ table.getPageCount() }}
+            <template #fallback> Page 1 of ? </template>
+          </ClientOnly>
         </div>
         <div class="flex items-center space-x-2">
-          <Button
-            variant="outline"
-            class="hidden w-8 h-8 p-0 lg:flex"
-            :disabled="!table.getCanPreviousPage()"
-            @click="table.setPageIndex(0)"
-          >
-            <span class="sr-only">Go to first page</span>
-            <ChevronsLeftIcon class="w-4 h-4" />
-          </Button>
-          <Button
-            variant="outline"
-            class="w-8 h-8 p-0"
-            :disabled="!table.getCanPreviousPage()"
-            @click="table.previousPage()"
-          >
-            <span class="sr-only">Go to previous page</span>
-            <ChevronLeftIcon class="w-4 h-4" />
-          </Button>
-          <Button
-            variant="outline"
-            class="w-8 h-8 p-0"
-            :disabled="!table.getCanNextPage()"
-            @click="table.nextPage()"
-          >
-            <span class="sr-only">Go to next page</span>
-            <ChevronRightIcon class="w-4 h-4" />
-          </Button>
-          <Button
-            variant="outline"
-            class="hidden w-8 h-8 p-0 lg:flex"
-            :disabled="!table.getCanNextPage()"
-            @click="table.setPageIndex(table.getPageCount() - 1)"
-          >
-            <span class="sr-only">Go to last page</span>
-            <ChevronsRightIcon class="w-4 h-4" />
-          </Button>
+          <ClientOnly>
+            <Button
+              variant="outline"
+              class="hidden w-8 h-8 p-0 lg:flex"
+              :disabled="!table.getCanPreviousPage()"
+              @click="table.setPageIndex(0)"
+            >
+              <span class="sr-only">Go to first page</span>
+              <ChevronsLeftIcon class="w-4 h-4" />
+            </Button>
+            <Button
+              variant="outline"
+              class="w-8 h-8 p-0"
+              :disabled="!table.getCanPreviousPage()"
+              @click="table.previousPage()"
+            >
+              <span class="sr-only">Go to previous page</span>
+              <ChevronLeftIcon class="w-4 h-4" />
+            </Button>
+            <Button
+              variant="outline"
+              class="w-8 h-8 p-0"
+              :disabled="!table.getCanNextPage()"
+              @click="table.nextPage()"
+            >
+              <span class="sr-only">Go to next page</span>
+              <ChevronRightIcon class="w-4 h-4" />
+            </Button>
+            <Button
+              variant="outline"
+              class="hidden w-8 h-8 p-0 lg:flex"
+              :disabled="!table.getCanNextPage()"
+              @click="table.setPageIndex(table.getPageCount() - 1)"
+            >
+              <span class="sr-only">Go to last page</span>
+              <ChevronsRightIcon class="w-4 h-4" />
+            </Button>
+
+            <template #fallback>
+              <Button
+                variant="outline"
+                class="hidden w-8 h-8 p-0 lg:flex"
+                disabled
+              >
+                <span class="sr-only">Go to first page</span>
+                <ChevronsLeftIcon class="w-4 h-4" />
+              </Button>
+              <Button variant="outline" class="w-8 h-8 p-0" disabled>
+                <span class="sr-only">Go to previous page</span>
+                <ChevronLeftIcon class="w-4 h-4" />
+              </Button>
+              <Button variant="outline" class="w-8 h-8 p-0" disabled>
+                <span class="sr-only">Go to next page</span>
+                <ChevronRightIcon class="w-4 h-4" />
+              </Button>
+              <Button
+                variant="outline"
+                class="hidden w-8 h-8 p-0 lg:flex"
+                disabled
+              >
+                <span class="sr-only">Go to last page</span>
+                <ChevronsRightIcon class="w-4 h-4" />
+              </Button>
+            </template>
+          </ClientOnly>
         </div>
       </div>
     </div>
