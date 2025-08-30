@@ -5,6 +5,7 @@ import {
   CheckIcon,
   DotIcon,
   CircleIcon,
+  XIcon,
 } from "lucide-vue-next";
 import {
   Dialog,
@@ -16,6 +17,7 @@ import {
 } from "~/components/ui/dialog";
 import {
   FormField,
+  FormFieldArray,
   FormItem,
   FormLabel,
   FormControl,
@@ -38,6 +40,7 @@ import {
   SelectItem,
   SelectValue,
 } from "~/components/ui/select";
+import { ScrollArea } from "~/components/ui/scroll-area";
 import { useForm, type TypedSchema } from "vee-validate";
 import { stepSchemas, type MergedValues } from "./create-job-utils";
 import { toast } from "vue-sonner";
@@ -46,24 +49,6 @@ import type { CollectionDocument } from "~/lib/api";
 const {
   public: { apiBase },
 } = useRuntimeConfig();
-
-const agents = useFetch<CollectionDocument<"agents">>("/api/v1/agents", {
-  server: false,
-  lazy: true,
-  baseURL: apiBase,
-});
-
-const open = ref(false);
-
-const stepIndex = ref<1 | 2 | 3 | 4>(1);
-
-const { meta, handleSubmit } = useForm({
-  validationSchema: computed(
-    () =>
-      stepSchemas[stepIndex.value - 1] as unknown as TypedSchema<MergedValues>,
-  ),
-  keepValuesOnUnmount: true,
-});
 
 const steps = [
   {
@@ -87,6 +72,24 @@ const steps = [
     description: "Configure each selected tool",
   },
 ] as const;
+
+const agents = useFetch<CollectionDocument<"agents">>("/api/v1/agents", {
+  server: false,
+  lazy: true,
+  baseURL: apiBase,
+});
+
+const open = ref(false);
+
+const stepIndex = ref<1 | 2 | 3 | 4>(1);
+
+const { handleSubmit, values, validate, meta } = useForm({
+  validationSchema: computed(
+    () =>
+      stepSchemas[stepIndex.value - 1] as unknown as TypedSchema<MergedValues>,
+  ),
+  keepValuesOnUnmount: true,
+});
 
 const onSubmit = handleSubmit((values) => {
   toast.info("submit", { action: () => console.log(values) });
@@ -115,7 +118,7 @@ const onSubmit = handleSubmit((values) => {
       </DialogHeader>
 
       <Stepper
-        v-slot="{ isNextDisabled, isPrevDisabled, nextStep, prevStep }"
+        v-slot="{ isPrevDisabled, nextStep, prevStep, isLastStep, isFirstStep }"
         v-model="stepIndex"
         orientation="vertical"
         as-child
@@ -129,6 +132,7 @@ const onSubmit = handleSubmit((values) => {
               v-slot="{ state }"
               class="relative flex w-full items-start gap-6"
               :step="step.step"
+              :disabled="step.step > stepIndex && meta.valid"
             >
               <StepperSeparator
                 v-if="step.step !== steps[steps.length - 1]?.step"
@@ -141,6 +145,8 @@ const onSubmit = handleSubmit((values) => {
                       ? 'default'
                       : 'outline'
                   "
+                  :disabled="step.step > stepIndex"
+                  type="button"
                   size="icon"
                   class="z-10 rounded-full shrink-0"
                   :class="[
@@ -221,35 +227,99 @@ const onSubmit = handleSubmit((values) => {
               </FormField>
             </template>
 
-            <template v-else-if="stepIndex === 3"> </template>
+            <template v-else-if="stepIndex === 3">
+              <FormFieldArray v-slot="{ fields, push, remove }" name="actions">
+                <FormField name="actions">
+                  <FormItem>
+                    <FormLabel>Available tools</FormLabel>
+                    <FormControl>
+                      <div class="grid grid-cols-1 lg:grid-cols-2 gap-2">
+                        <Button
+                          v-for="i in agents.data.value?.data.find(
+                            (v) => v.id === values.agent_id,
+                          )?.attributes.available_tools"
+                          :key="i.cmd"
+                          type="button"
+                          @click="() => push(i.cmd)"
+                        >
+                          {{ i.cmd }}
+                        </Button>
+                      </div>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                </FormField>
+
+                <ScrollArea class="bg-muted rounded-lg">
+                  <div class="grid grid-cols-1 lg:grid-cols-2 gap-2 p-2 h-36">
+                    <div
+                      v-if="!fields.length"
+                      class="lg:col-span-2 grid items-center justify-center text-muted-foreground"
+                    >
+                      Please select at least one tool
+                    </div>
+                    <FormField
+                      v-for="(field, idx) in fields"
+                      :key="field.key"
+                      :name="`actions[${idx}]`"
+                    >
+                      <FormItem>
+                        <FormControl>
+                          <div
+                            class="flex flex-row items-center justify-between rounded-md border shadow-sm p-2 h-fit bg-white"
+                          >
+                            <span class="pl-2">{{ field.value }}</span>
+                            <Button
+                              variant="default"
+                              size="icon"
+                              @click="() => remove(idx)"
+                            >
+                              <XIcon class="size-4" />
+                            </Button>
+                          </div>
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    </FormField>
+                  </div>
+                </ScrollArea>
+              </FormFieldArray>
+            </template>
 
             <template v-else> </template>
           </div>
 
           <!-- footer action -->
-          <div class="flex items-center justify-between mt-4">
+          <div
+            class="flex items-center justify-between has-[>*:only-child]:justify-end mt-4"
+          >
             <Button
+              v-if="!isFirstStep"
               :disabled="isPrevDisabled"
               variant="outline"
               size="sm"
-              @click="prevStep()"
+              type="button"
+              @click="() => prevStep()"
             >
               Back
             </Button>
-            <div class="flex items-center gap-3">
-              <Button
-                v-if="stepIndex !== 4"
-                :type="meta.valid ? 'button' : 'submit'"
-                :disabled="isNextDisabled"
-                size="sm"
-                @click="meta.valid && nextStep()"
-              >
-                Next
-              </Button>
-              <Button v-if="stepIndex === 4" size="sm" type="submit">
-                Submit
-              </Button>
-            </div>
+
+            <Button
+              v-if="!isLastStep"
+              type="button"
+              size="sm"
+              @click="async () => (await validate()).valid && nextStep()"
+            >
+              Next
+            </Button>
+            <Button
+              v-if="isLastStep"
+              :disabled="!meta.valid"
+              size="sm"
+              type="submit"
+            >
+              Submit
+            </Button>
           </div>
         </form>
       </Stepper>

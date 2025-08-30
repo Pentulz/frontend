@@ -10,7 +10,7 @@ const schemas = [
     agent_id: z.string().min(1).max(64),
   }),
   z.object({
-    actions: z.array(z.string().min(1).max(64)),
+    actions: z.array(z.string().min(1).max(64)).min(1),
   }),
   z.object({
     actions_config: z.array(

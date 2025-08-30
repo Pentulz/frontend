@@ -70,7 +70,7 @@ type Identifier<K extends RMKeys = RMKeys> = {
   id: string;
 };
 
-type Entity<K extends RMKeys = RMKeys> = Identifier<K> & {
+export type Entity<K extends RMKeys = RMKeys> = Identifier<K> & {
   attributes: ResourceMap[K];
 };
 
