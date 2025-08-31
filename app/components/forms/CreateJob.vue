@@ -156,6 +156,7 @@ const onSubmit = handleSubmit(
       open.value = false;
       resetForm();
       stepIndex.value = 1;
+      navigateTo(`/jobs/${passed.at(0)?.data.id}`);
     }
   },
 );
