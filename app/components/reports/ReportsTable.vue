@@ -17,7 +17,7 @@ import {
 
 const config = useRuntimeConfig();
 
-const { data, pending } = useFetch<JsonDocument, ClientError>(
+const { data, pending, error } = useFetch<JsonDocument, ClientError>(
   "/api/v1/reports",
   {
     server: false,
@@ -62,7 +62,7 @@ const reports = computed<Report[]>(() => {
       </CardHeader>
       <CardContent class="flex flex-col gap-4">
         <DataTable :pending />
-        <Alert v-if="!doc" variant="destructive" class="w-fit mx-auto">
+        <Alert v-if="!doc || error" variant="destructive" class="w-fit mx-auto">
           <AlertCircleIcon class="size-5" />
           <AlertTitle>Error</AlertTitle>
           <AlertDescription
