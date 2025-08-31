@@ -290,7 +290,7 @@ const toolMap = computed<{ [key: string]: SystemTool }>(
                           :key="agent.id"
                           :value="agent.id"
                         >
-                          {{ agent.attributes.hostname ?? agent.id }}
+                          {{ agent.attributes.name }}
                         </SelectItem>
                       </SelectContent>
                     </Select>
@@ -313,10 +313,21 @@ const toolMap = computed<{ [key: string]: SystemTool }>(
                           )?.attributes.available_tools"
                           :key="i.cmd"
                           type="button"
+                          :disabled="!toolMap[i.cmd]"
                           @click="() => push({ name: i.cmd })"
                         >
                           {{ i.cmd }}
                         </Button>
+                        <div
+                          v-if="
+                            !agents.data.value?.data.find(
+                              (v) => v.id === values.agent_id,
+                            )?.attributes.available_tools?.length
+                          "
+                          class="lg:col-span-2 text-red-500"
+                        >
+                          No tools available for this host
+                        </div>
                       </div>
                     </FormControl>
                     <FormMessage />
