@@ -132,8 +132,6 @@ const onSubmit = handleSubmit(
 
     isCreating.value = false;
 
-    // const failed = results.filter((res) => !isSingleDocumentOf(res, "jobs"));
-
     const [passed, failed] = results.reduce<
       [SingleDocument<"jobs">[], unknown[]]
     >(
