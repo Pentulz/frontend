@@ -1,23 +1,50 @@
 <script setup lang="ts">
-import type { Agent } from ".";
 import {
   DataTableProvider,
   DataTable,
   DataTablePagination,
 } from "../ui/data-table";
-import { Card, CardHeader, CardTitle, CardContent } from "#components";
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardContent,
+  CardFooter,
+} from "#components";
 import { ServerIcon } from "lucide-vue-next";
 import { columns } from "./columns";
 import AgentFilters from "./AgentFilters.vue";
+import {
+  type JsonDocument,
+  type ClientError,
+  isCollectionDocumentOf,
+} from "~/lib/api";
+import { agents } from "~/assets/data/agents";
 
-type Props = {
-  agents: Agent[];
-};
+const {
+  public: { apiBase },
+} = useRuntimeConfig();
 
-const { agents } = defineProps<Props>();
+const { pending, error, ...req } = useFetch<JsonDocument, ClientError>(
+  "/api/v1/agents",
+  {
+    server: false,
+    lazy: true,
+    baseURL: apiBase,
+  },
+);
+
+const data = computed(() => {
+  if (!req.data.value) return [];
+
+  if (!isCollectionDocumentOf(req.data.value, "agents")) return [];
+
+  // TODO: properly map the values
+  return agents;
+});
 </script>
 <template>
-  <DataTableProvider :columns="columns" :data="agents">
+  <DataTableProvider :columns :data>
     <AgentFilters />
     <Card>
       <CardHeader>
@@ -26,8 +53,17 @@ const { agents } = defineProps<Props>();
         </CardTitle>
       </CardHeader>
       <CardContent>
-        <DataTable />
+        <DataTable :pending />
       </CardContent>
+      <CardFooter v-if="error">
+        <div
+          v-for="err in error.data?.errors"
+          :key="err.detail"
+          class="text-red-500"
+        >
+          {{ err.status }} {{ err.title }}
+        </div>
+      </CardFooter>
     </Card>
     <DataTablePagination />
   </DataTableProvider>
