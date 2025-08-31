@@ -4,20 +4,12 @@ import type { ColumnDef } from "@tanstack/vue-table";
 import { SortableHeader, DateTimeCell } from "~/components/ui/data-table";
 import ActionsCell from "./ActionsCell.vue";
 import StatusCell from "./StatusCell.vue";
-import HostsCell from "./HostsCell.vue";
-import VunlerabilitiesCell from "./VunlerabilitiesCell.vue";
 
 export const columns: ColumnDef<Report>[] = [
   {
-    accessorKey: "name",
-    header: ({ column }) =>
-      h(SortableHeader<Report>, { column }, () => "Job Name"),
-    cell: ({ row }) =>
-      h(
-        "p",
-        { name: row.getValue<string>("name"), id: row.original.id },
-        row.getValue("name"),
-      ),
+    accessorKey: "id",
+    header: ({ column }) => h(SortableHeader<Report>, { column }, () => "ID"),
+    cell: ({ row }) => row.getValue<string>("id"),
   },
   {
     accessorKey: "status",
@@ -28,38 +20,19 @@ export const columns: ColumnDef<Report>[] = [
     filterFn: "arrIncludesSome",
   },
   {
-    accessorKey: "hosts",
+    accessorKey: "risk_level",
     header: ({ column }) =>
-      h(SortableHeader<Report>, { column }, () => "Hosts Found"),
-    cell: ({ row }) =>
-      h(HostsCell, { hosts: row.getValue<number | undefined>("hosts") }),
+      h(SortableHeader<Report>, { column }, () => "Risk level"),
+    cell: ({ row }) => row.getValue("risk_level"),
   },
   {
-    accessorKey: "vulnerabilities",
-    header: () => "Vulnerabilities",
-    cell: ({ row }) =>
-      h(VunlerabilitiesCell, {
-        vulnerabilities: row.getValue<
-          { count: number; highest: string } | undefined
-        >("vulnerabilities"),
-      }),
-  },
-  {
-    accessorKey: "jobs",
-    header: ({ column }) =>
-      h(
-        SortableHeader<Report>,
-        { class: "text-right justify-end", column },
-        () => "Jobs",
-      ),
-    cell: ({ row }) => h("div", { class: "text-right" }, row.getValue("jobs")),
-  },
-  {
-    accessorKey: "created",
+    accessorKey: "created_at",
     header: ({ column }) =>
       h(SortableHeader<Report>, { column }, () => "Created"),
     cell: ({ row }) =>
-      h(DateTimeCell, { datetime: row.getValue<Date>("created") }),
+      h(DateTimeCell, {
+        datetime: row.getValue<Date>("created_at"),
+      }),
   },
   {
     accessorKey: "actions",
