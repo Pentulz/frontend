@@ -37,6 +37,6 @@ const variant = computed(() => variants[status ?? "unknown"]);
 <template>
   <Badge :variant="variant">
     <component :is="icon" class="w-5 h-5" />
-    {{ status ?? 'Unknown' }}
+    {{ status ?? "Unknown" }}
   </Badge>
 </template>
