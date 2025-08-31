@@ -69,7 +69,7 @@ export type Results = {
   warnings?: number;
   risk_level?: string;
   total_scans?: number;
-  recommandations?: string[];
+  recommendations?: string[];
   vulnerabilities_found?: number;
   healthy_systems?: number;
   performance_metrics?: {

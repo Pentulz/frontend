@@ -28,7 +28,7 @@ export const columns: ColumnDef<Report>[] = [
   {
     accessorKey: "created_at",
     header: ({ column }) =>
-      h(SortableHeader<Report>, { column }, () => "Status"),
+      h(SortableHeader<Report>, { column }, () => "Created"),
     cell: ({ row }) =>
       h(DateTimeCell, {
         datetime: row.getValue<Date>("created_at"),

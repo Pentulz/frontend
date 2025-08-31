@@ -35,8 +35,8 @@ const icon = computed(() => icons[status ?? "unknown"] ?? icons["unknown"]);
 const variant = computed(() => variants[status ?? "unknown"]);
 </script>
 <template>
-  <Badge v-if="status" :variant="variant">
+  <Badge :variant="variant">
     <component :is="icon" class="w-5 h-5" />
-    {{ status }}
+    {{ status ?? 'Unknown' }}
   </Badge>
 </template>
