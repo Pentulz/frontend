@@ -32,6 +32,7 @@ const availableTools = computed(() => {
 });
 
 const searchId = useId();
+const searchByHostname = useId();
 </script>
 <template>
   <Card>
