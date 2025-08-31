@@ -33,7 +33,7 @@ const {
 } = useRuntimeConfig();
 
 const bodySchema = z.object({
-  hostname: z.string().min(1).max(50),
+  name: z.string().min(1).max(50),
   description: z.string().min(1).max(400),
 });
 
@@ -120,13 +120,13 @@ const onSubmit = form.handleSubmit(async (values) => {
         </DialogDescription>
       </DialogHeader>
       <form method="POST" class="flex flex-col gap-6" @submit="onSubmit">
-        <FormField v-slot="{ componentField }" name="hostname">
+        <FormField v-slot="{ componentField }" name="name">
           <FormItem>
-            <FormLabel>Hostname</FormLabel>
+            <FormLabel>Name</FormLabel>
             <FormControl>
               <Input
                 type="text"
-                placeholder="Enter hostname"
+                placeholder="Enter name"
                 v-bind="componentField"
               />
             </FormControl>

@@ -2,26 +2,31 @@
 import { Badge } from "#components";
 
 type Props = {
-  capabilities: string[];
+  availableTools?: string[];
 };
 
-const { capabilities } = defineProps<Props>();
+const props = withDefaults(defineProps<Props>(), {
+  availableTools: () => [],
+});
 
-const displayedCapabilities = computed(() => {
-  if (capabilities.length <= 3) return capabilities;
+const displayedAvailableTools = computed(() => {
+  if (props.availableTools.length <= 3) return props.availableTools;
 
-  return [...capabilities.slice(0, 2), `+${capabilities.length - 2}`];
+  return [
+    ...props.availableTools.slice(0, 2),
+    `+${props.availableTools.length - 2}`,
+  ];
 });
 </script>
 
 <template>
   <div class="flex flex-row gap-2">
     <Badge
-      v-for="capability in displayedCapabilities"
-      :key="capability"
+      v-for="tool in displayedAvailableTools"
+      :key="tool"
       variant="outline"
     >
-      {{ capability }}
+      {{ tool.cmd }}
     </Badge>
   </div>
 </template>

@@ -35,12 +35,16 @@ const { pending, error, ...req } = useFetch<JsonDocument, ClientError>(
 );
 
 const data = computed(() => {
-  if (!req.data.value) return [];
+  const doc = req.data.value;
+  if (!doc) return [];
 
-  if (!isCollectionDocumentOf(req.data.value, "agents")) return [];
+  if (!isCollectionDocumentOf(doc, "agents")) return [];
 
-  // TODO: properly map the values
-  return agents;
+  // Extract the collection items from the document
+  return doc.data.map((item) => ({
+    id: item.id,
+    ...item.attributes,
+  }));
 });
 </script>
 <template>

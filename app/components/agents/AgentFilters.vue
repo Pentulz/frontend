@@ -21,17 +21,21 @@ const statuses = computed(() =>
   ),
 );
 
-const types = computed(() =>
+const platforms = computed(() =>
   Array.from<string>(
-    table.getColumn("type")?.getFacetedUniqueValues().keys() ?? [],
+    table.getColumn("platform")?.getFacetedUniqueValues().keys() ?? [],
   ),
 );
 
-const capabilities = computed(() =>
-  Array.from<string>(
-    table.getColumn("capabilities")?.getFacetedUniqueValues().keys() ?? [],
-  ),
-);
+const availableTools = computed(() => {
+  const column = table.getColumn("available_tools");
+  if (!column) return [];
+
+  const facetedValues = column.getFacetedUniqueValues();
+  const allToolCommands = Array.from(facetedValues.keys());
+
+  return Array.from(new Set(allToolCommands)).sort();
+});
 
 const searchId = useId();
 const statusId = useId();
@@ -51,7 +55,7 @@ const statusId = useId();
           <Input
             :id="searchId"
             type="text"
-            placeholder="Search agents..."
+            placeholder="Search agents by name..."
             class="pl-8"
             @update:model-value="
               table.getColumn('name')?.setFilterValue($event)
@@ -66,79 +70,35 @@ const statusId = useId();
       </div>
 
       <div class="flex flex-col gap-2">
-        <Label :for="statusId">Status</Label>
-        <div class="flex flex-row gap-2">
-          <Select
-            :model-value="table.getColumn('status')?.getFilterValue() as string"
+        <Label :for="searchByHostname">Search</Label>
+        <div class="relative w-full max-w-sm items-center">
+          <Input
+            :id="searchByHostname"
+            type="text"
+            placeholder="Search agents by hostname..."
+            class="pl-8"
             @update:model-value="
-              table.getColumn('status')?.setFilterValue($event)
+              table.getColumn('hostname')?.setFilterValue($event)
             "
+          />
+          <span
+            class="absolute start-0 inset-y-0 flex items-center justify-center px-2"
           >
-            <SelectTrigger class="lg:max-w-sm w-full">
-              <SelectValue placeholder="All statuses" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem
-                v-for="status in statuses"
-                :key="status"
-                :value="status"
-              >
-                {{ status }}
-              </SelectItem>
-            </SelectContent>
-          </Select>
-          <Button
-            variant="outline"
-            size="icon"
-            @click="table.getColumn('status')?.setFilterValue(undefined)"
-          >
-            <RotateCcwIcon class="size-4" />
-          </Button>
+            <SearchIcon class="size-4 text-muted-foreground" />
+          </span>
         </div>
       </div>
 
       <div class="flex flex-col gap-2">
-        <Label>Type</Label>
+        <Label>Platform</Label>
         <div class="flex flex-row gap-2">
           <Select
             multiple
             :model-value="
-              (table.getColumn('type')?.getFilterValue() as string[]) ?? []
+              (table.getColumn('platform')?.getFilterValue() as string[]) ?? []
             "
             @update:model-value="
-              table.getColumn('type')?.setFilterValue($event)
-            "
-          >
-            <SelectTrigger class="lg:max-w-sm w-full">
-              <SelectValue placeholder="All types" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem v-for="type in types" :key="type" :value="type">
-                {{ type }}
-              </SelectItem>
-            </SelectContent>
-          </Select>
-          <Button
-            variant="outline"
-            size="icon"
-            @click="table.getColumn('type')?.setFilterValue(undefined)"
-          >
-            <RotateCcwIcon class="size-4" />
-          </Button>
-        </div>
-      </div>
-
-      <div class="flex flex-col gap-2">
-        <Label>Capabilities</Label>
-        <div class="flex flex-row gap-2">
-          <Select
-            multiple
-            :model-value="
-              (table.getColumn('capabilities')?.getFilterValue() as string[]) ??
-              []
-            "
-            @update:model-value="
-              table.getColumn('capabilities')?.setFilterValue($event)
+              table.getColumn('platform')?.setFilterValue($event)
             "
           >
             <SelectTrigger class="lg:max-w-sm w-full">
@@ -146,18 +106,57 @@ const statusId = useId();
             </SelectTrigger>
             <SelectContent>
               <SelectItem
-                v-for="capability in capabilities"
-                :key="capability"
-                :value="capability"
+                v-for="platform in platforms"
+                :key="platform"
+                :value="platform"
               >
-                {{ capability }}
+                {{ platform }}
               </SelectItem>
             </SelectContent>
           </Select>
           <Button
             variant="outline"
             size="icon"
-            @click="table.getColumn('capabilities')?.setFilterValue(undefined)"
+            @click="table.getColumn('platform')?.setFilterValue(undefined)"
+          >
+            <RotateCcwIcon class="size-4" />
+          </Button>
+        </div>
+      </div>
+
+      <div class="flex flex-col gap-2">
+        <Label>Available tools</Label>
+        <div class="flex flex-row gap-2">
+          <Select
+            multiple
+            :model-value="
+              (table
+                .getColumn('available_tools')
+                ?.getFilterValue() as string[]) ?? []
+            "
+            @update:model-value="
+              table.getColumn('available_tools')?.setFilterValue($event)
+            "
+          >
+            <SelectTrigger class="lg:max-w-sm w-full">
+              <SelectValue placeholder="All types" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem
+                v-for="tool in availableTools"
+                :key="tool"
+                :value="tool"
+              >
+                {{ tool }}
+              </SelectItem>
+            </SelectContent>
+          </Select>
+          <Button
+            variant="outline"
+            size="icon"
+            @click="
+              table.getColumn('available_tools')?.setFilterValue(undefined)
+            "
           >
             <RotateCcwIcon class="size-4" />
           </Button>
