@@ -9,7 +9,7 @@ import {
 import type { Component } from "vue";
 import type { BadgeVariants } from "../ui/badge";
 type Props = {
-  status: string;
+  status: string | null;
 };
 
 const { status } = defineProps<Props>();
@@ -19,21 +19,23 @@ const icons: { [key: string]: Component } = {
   failed: CircleX,
   pending: CircleDashed,
   running: Loader,
-};
+  unknown: CircleQuestionMark,
+} as const;
 
 const variants: { [key: string]: BadgeVariants["variant"] } = {
   completed: "outline",
   failed: "destructive",
   pending: "secondary",
   running: "secondary",
-};
+  unknown: "default",
+} as const;
 
-const icon = computed(() => icons[status] ?? CircleQuestionMark);
+const icon = computed(() => icons[status ?? "unknown"] ?? icons["unknown"]);
 
-const variant = computed(() => variants[status] ?? "default");
+const variant = computed(() => variants[status ?? "unknown"]);
 </script>
 <template>
-  <Badge :variant="variant">
+  <Badge v-if="status" :variant="variant">
     <component :is="icon" class="w-5 h-5" />
     {{ status }}
   </Badge>

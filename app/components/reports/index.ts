@@ -1,14 +1,8 @@
 export type Report = {
   id: string;
-  name: string;
-  status: string;
-  hosts?: number;
-  vulnerabilities?: {
-    count: number;
-    highest: string;
-  };
-  jobs: number;
-  created: Date;
+  created_at: Date | null;
+  status: string | null;
+  risk_level: string | null;
 };
 
 export { default as ReportsTable } from "./ReportsTable.vue";

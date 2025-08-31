@@ -17,7 +17,11 @@ const { table } = useDataTable<Report, unknown>();
 
 const statuses = computed(() =>
   Array.from<string>(
-    table.getColumn("status")?.getFacetedUniqueValues().keys() ?? [],
+    table
+      .getColumn("status")
+      ?.getFacetedUniqueValues()
+      .keys()
+      .filter(Boolean) ?? [],
   ),
 );
 
@@ -39,11 +43,9 @@ const statusId = useId();
           <Input
             :id="searchId"
             type="text"
-            placeholder="Search jobs..."
+            placeholder="Search report..."
             class="pl-8"
-            @update:model-value="
-              table.getColumn('name')?.setFilterValue($event)
-            "
+            @update:model-value="table.getColumn('id')?.setFilterValue($event)"
           />
           <span
             class="absolute start-0 inset-y-0 flex items-center justify-center px-2"

@@ -62,6 +62,23 @@ export type SystemToolCollectionDocument = {
   }>;
 };
 
+export type Results = {
+  period?: string;
+  summary?: string;
+  status?: string;
+  warnings?: number;
+  risk_level?: string;
+  total_scans?: number;
+  recommandations?: string[];
+  vulnerabilities_found?: number;
+  healthy_systems?: number;
+  performance_metrics?: {
+    average_cpu?: string;
+    average_memory?: string;
+    network_latency?: string;
+  };
+};
+
 type ResourceMap = {
   tools: {
     cmd: string;
@@ -91,12 +108,12 @@ type ResourceMap = {
     started_at: Date;
     completed_at: Date;
     created_at: Date;
-    results: unknown; // TODO: specify
+    results: Results;
   }>;
   reports: {
     id: string;
-    results: unknown; // TODO: specify
-    created_at: Date;
+    results: Results;
+    created_at: string;
   };
 };
 

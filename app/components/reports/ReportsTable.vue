@@ -9,12 +9,37 @@ import { Card, CardHeader, CardTitle, CardContent } from "#components";
 import { FileChartColumnIcon } from "lucide-vue-next";
 import { columns } from "./columns";
 import ReportFilters from "./ReportFilters.vue";
+import type { CollectionDocument, ClientError } from "~/lib/api";
 
-type Props = {
-  reports: Report[];
-};
+const config = useRuntimeConfig();
 
-const { reports } = defineProps<Props>();
+const { data, pending } = useFetch<CollectionDocument<"reports">, ClientError>(
+  "/api/v1/reports",
+  {
+    server: false,
+    lazy: true,
+    baseURL: config.public.apiBase,
+  },
+);
+
+const reports = computed<Report[]>(() => {
+  if (!data.value) return [];
+
+  return data.value.data.map<Report>(
+    ({
+      id,
+      attributes: {
+        created_at,
+        results: { risk_level = null, status = null },
+      },
+    }) => ({
+      id: id,
+      created_at: created_at ? new Date(created_at) : null,
+      risk_level: risk_level,
+      status: status,
+    }),
+  );
+});
 </script>
 <template>
   <DataTableProvider :columns="columns" :data="reports">
@@ -26,7 +51,7 @@ const { reports } = defineProps<Props>();
         </CardTitle>
       </CardHeader>
       <CardContent>
-        <DataTable />
+        <DataTable :pending />
       </CardContent>
     </Card>
     <DataTablePagination />
