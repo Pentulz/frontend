@@ -1,6 +1,7 @@
 import { h } from "vue";
 import type { Job } from ".";
 import type { ColumnDef } from "@tanstack/vue-table";
+import ActionCell from "./ActionCell.vue";
 import ActionsCell from "./ActionsCell.vue";
 import NameCell from "./NameCell.vue";
 import StatusCell from "./StatusCell.vue";
@@ -12,44 +13,64 @@ export const columns: ColumnDef<Job>[] = [
   {
     accessorKey: "name",
     header: ({ column }) =>
-      h(SortableHeader<Job, unknown>, { column }, () => "Job Name"),
+      h(SortableHeader<Job, unknown>, { column }, () => "Name"),
     cell: ({ row }) =>
       h(NameCell, { name: row.getValue<string>("name"), id: row.original.id }),
   },
   {
-    accessorKey: "status",
+    id: "status", // Use 'id' instead of 'accessorKey' since we're computing this
     header: ({ column }) =>
       h(SortableHeader<Job, unknown>, { column }, () => "Status"),
-    cell: ({ row }) =>
-      h(StatusCell, { status: row.getValue<string>("status") }),
-    filterFn: "arrIncludesSome",
+    cell: ({ row }) => {
+      const startedAt = row.original.started_at;
+      const completedAt = row.original.completed_at;
+      return h(StatusCell, {
+        started_at: startedAt,
+        completed_at: completedAt,
+      });
+    },
+    // For filtering purposes, compute the status value
+    getUniqueValues: (row) => {
+      const startedAt = row.original.started_at;
+      const completedAt = row.original.completed_at;
+
+      if (completedAt) return "Completed";
+      if (startedAt) return "Running";
+      return "Pending";
+    },
+    filterFn: (row, columnId, filterValue: string[]) => {
+      const startedAt = row.original.started_at;
+      const completedAt = row.original.completed_at;
+
+      let status: string;
+      if (completedAt) status = "Completed";
+      else if (startedAt) status = "Running";
+      else status = "Pending";
+
+      return filterValue?.includes(status) ?? false;
+    },
   },
   {
-    accessorKey: "agentId",
+    accessorKey: "agent_id",
     header: ({ column }) =>
       h(SortableHeader<Job, unknown>, { column }, () => "Agent"),
     cell: ({ row }) =>
-      h(AgentCell, { agentId: row.getValue<string>("agentId") }),
+      h(AgentCell, { agentId: row.getValue<string>("agent_id") }),
     filterFn: "arrIncludesSome",
   },
   {
-    accessorKey: "tools",
-    header: () => "Tools",
-    cell: ({ row }) => h(ToolsCell, { tools: row.getValue<string[]>("tools") }),
-    getUniqueValues: (row) => row.tools ?? [],
-  },
-  {
-    accessorKey: "started",
-    header: ({ column }) =>
-      h(SortableHeader<Job, unknown>, { column }, () => "Started"),
+    accessorKey: "action",
+    header: () => "Action",
     cell: ({ row }) =>
-      h(DateTimeCell, { datetime: row.getValue<Date>("started") }),
+      h(ActionCell, { action: row.getValue<string[]>("action") }),
+    getUniqueValues: (row) => row.action ?? [],
   },
   {
-    accessorKey: "duration",
+    accessorKey: "created_at",
     header: ({ column }) =>
-      h(SortableHeader<Job, unknown>, { column }, () => "Duration"),
-    cell: ({ row }) => row.getValue<string>("duration") ?? "-",
+      h(SortableHeader<Job, unknown>, { column }, () => "Created At"),
+    cell: ({ row }) =>
+      h(DateTimeCell, { datetime: row.getValue<Date>("created_at") }),
   },
   {
     accessorKey: "actions",
