@@ -40,17 +40,19 @@ import {
   SelectContent,
   SelectItem,
   SelectValue,
+  SelectItemText,
 } from "~/components/ui/select";
 import { ScrollArea } from "~/components/ui/scroll-area";
 import { useForm, type FieldEntry, type TypedSchema } from "vee-validate";
 import { stepSchemas, type MergedValues } from "./create-job-utils";
 import { toast } from "vue-sonner";
-import { data as systemTools } from "~/assets/data/tools";
 import { Checkbox } from "~/components/ui/checkbox";
-import type {
-  CollectionDocument,
-  SystemToolCollectionDocument,
-  SystemTool,
+import {
+  type CollectionDocument,
+  type SystemToolCollectionDocument,
+  type SystemTool,
+  type SingleDocument,
+  isSingleDocumentOf,
 } from "~/lib/api";
 
 const {
@@ -86,7 +88,7 @@ const agents = useFetch<CollectionDocument<"agents">>("/api/v1/agents", {
   baseURL: apiBase,
 });
 
-const _tools = useFetch<SystemToolCollectionDocument>("/api/v1/tools", {
+const tools = useFetch<SystemToolCollectionDocument>("/api/v1/tools", {
   server: false,
   lazy: true,
   baseURL: apiBase,
@@ -96,7 +98,9 @@ const open = ref(false);
 
 const stepIndex = ref<1 | 2 | 3 | 4>(1);
 
-const { handleSubmit, values, validate, meta } = useForm({
+const isCreating = ref<boolean>(false);
+
+const { handleSubmit, values, validate, meta, resetForm } = useForm({
   validationSchema: computed(
     () =>
       stepSchemas[stepIndex.value - 1] as unknown as TypedSchema<MergedValues>,
@@ -104,16 +108,64 @@ const { handleSubmit, values, validate, meta } = useForm({
   keepValuesOnUnmount: true,
 });
 
-const onSubmit = handleSubmit((values) => {
-  toast.info("submit");
-  console.log(values);
-});
+const onSubmit = handleSubmit(
+  async ({ name, description, agent_id, actions }) => {
+    isCreating.value = true;
+    const results = await Promise.all(
+      actions.map<Promise<SingleDocument<"jobs">>>(async (v) =>
+        $fetch("/api/v1/jobs", {
+          method: "POST",
+          baseURL: apiBase,
+          body: {
+            name,
+            description,
+            agent_id,
+            action: {
+              name: v.name,
+              variant: v.variant,
+              args: v.args,
+            },
+          },
+        }),
+      ),
+    );
 
-const toolMap = computed<{ [key: string]: SystemTool }>(() =>
-  systemTools.data.reduce(
-    (acc, cur) => ({ [cur.attributes.cmd]: cur.attributes, ...acc }),
-    {},
-  ),
+    isCreating.value = false;
+
+    // const failed = results.filter((res) => !isSingleDocumentOf(res, "jobs"));
+
+    const [passed, failed] = results.reduce<
+      [SingleDocument<"jobs">[], unknown[]]
+    >(
+      ([pass, fail], cur) =>
+        isSingleDocumentOf(cur, "jobs")
+          ? [[...pass, cur], fail]
+          : [pass, [...fail, cur]],
+      [[], []],
+    );
+
+    if (failed.length) {
+      toast.error(`Failed to create ${failed.length} jobs`);
+    }
+
+    passed.forEach((job) =>
+      toast.success("Successfully created job", { description: job.data.id }),
+    );
+
+    if (passed.length) {
+      open.value = false;
+      resetForm();
+      stepIndex.value = 1;
+    }
+  },
+);
+
+const toolMap = computed<{ [key: string]: SystemTool }>(
+  () =>
+    tools.data.value?.data.reduce(
+      (acc, cur) => ({ [cur.attributes.cmd]: cur.attributes, ...acc }),
+      {},
+    ) ?? {},
 );
 </script>
 
@@ -347,19 +399,41 @@ const toolMap = computed<{ [key: string]: SystemTool }>(() =>
                                           >
                                             <SelectValue
                                               placeholder="Choose a configuration mode"
-                                            />
+                                            >
+                                              {{
+                                                componentField.modelValue
+                                                  ? toolMap[
+                                                      field.value.name
+                                                    ]?.variants.find(
+                                                      (v) =>
+                                                        v.id ===
+                                                        componentField.modelValue,
+                                                    )?.name
+                                                  : "Choose a configuration mode"
+                                              }}
+                                            </SelectValue>
                                           </SelectTrigger>
                                           <SelectContent>
                                             <SelectItem
                                               v-for="variant in toolMap[
                                                 field.value.name
-                                              ]?.variants.map(
-                                                (v) => v.description,
-                                              ) ?? []"
-                                              :key="variant"
-                                              :value="variant"
+                                              ]?.variants ?? []"
+                                              :key="variant.id"
+                                              :value="variant.id"
                                             >
-                                              {{ variant }}
+                                              <div
+                                                class="flex flex-col items-start gap-1"
+                                              >
+                                                <SelectItemText>
+                                                  {{ variant.name }}
+                                                </SelectItemText>
+                                                <span
+                                                  class="text-sm text-muted-foreground"
+                                                  >{{
+                                                    variant.description
+                                                  }}</span
+                                                >
+                                              </div>
                                             </SelectItem>
                                           </SelectContent>
                                         </Select>
@@ -375,8 +449,7 @@ const toolMap = computed<{ [key: string]: SystemTool }>(() =>
                                       v-for="argDef in toolMap[
                                         field.value.name
                                       ]?.variants.find(
-                                        (v) =>
-                                          v.description == field.value.variant,
+                                        (v) => v.id == field.value.variant,
                                       )?.argument_definitions"
                                       :key="argDef.name"
                                       v-slot="{ componentField }"

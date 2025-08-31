@@ -41,8 +41,10 @@ type TypedArgumentDefinition<
 };
 
 type ToolVariant = {
-  args: string[];
+  id: string;
+  name: string;
   description: string;
+  arguments: string[];
   argument_definitions: TypedArgumentDefinition[];
 };
 
