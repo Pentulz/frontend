@@ -88,6 +88,7 @@ type ResourceMap = {
   }>;
   agents: {
     id: string;
+    name: string;
     description: string;
     token: string;
     last_seen_at: Date;
