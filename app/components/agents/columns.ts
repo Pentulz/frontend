@@ -4,7 +4,6 @@ import type { ColumnDef } from "@tanstack/vue-table";
 import Header from "../ui/data-table/SortableHeader.vue";
 import AvailableToolsCell from "./AvailableToolsCell.vue";
 import StatusCell from "./StatusCell.vue";
-import TypeCell from "./TypeCell.vue";
 import ActionsCell from "./ActionsCell.vue";
 
 export const columns: ColumnDef<Agent>[] = [

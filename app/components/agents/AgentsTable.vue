@@ -19,7 +19,6 @@ import {
   type ClientError,
   isCollectionDocumentOf,
 } from "~/lib/api";
-import { agents } from "~/assets/data/agents";
 
 const {
   public: { apiBase },

@@ -15,12 +15,6 @@ import type { Agent } from ".";
 
 const { table } = useDataTable<Agent, unknown>();
 
-const statuses = computed(() =>
-  Array.from<string>(
-    table.getColumn("status")?.getFacetedUniqueValues().keys() ?? [],
-  ),
-);
-
 const platforms = computed(() =>
   Array.from<string>(
     table.getColumn("platform")?.getFacetedUniqueValues().keys() ?? [],
@@ -38,7 +32,6 @@ const availableTools = computed(() => {
 });
 
 const searchId = useId();
-const statusId = useId();
 </script>
 <template>
   <Card>
