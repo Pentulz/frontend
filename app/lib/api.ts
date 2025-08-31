@@ -89,7 +89,6 @@ type ResourceMap = {
     version?: string;
   }>;
   agents: {
-    id: string;
     name: string;
     description: string;
     token: string;
@@ -154,27 +153,35 @@ export function isType<K extends keyof ResourceMap>(
   return r.type === t;
 }
 
-export function isCollectionDocument<K extends RMKeys>(
-  doc: JsonDocument<K>,
-): doc is CollectionDocument<K> {
-  return Array.isArray(doc.data);
+export function isJsonDocument(doc: unknown): doc is JsonDocument {
+  if (!doc) return false;
+
+  if (typeof doc !== "object") return false;
+
+  if (!("data" in doc)) return false;
+
+  if (typeof doc.data !== "object") return false;
+
+  return true;
 }
 
-export function isSingleDocument<K extends RMKeys>(
-  doc: JsonDocument<K>,
-): doc is SingleDocument<K> {
-  return !Array.isArray(doc.data);
+export function isCollectionDocument(doc: unknown): doc is CollectionDocument {
+  return isJsonDocument(doc) && Array.isArray(doc.data);
+}
+
+export function isSingleDocument(doc: unknown): doc is SingleDocument {
+  return isJsonDocument(doc) && !Array.isArray(doc.data);
 }
 
 export function isSingleDocumentOf<K extends RMKeys>(
-  doc: JsonDocument,
+  doc: unknown,
   t: K,
 ): doc is SingleDocument<K> {
   return isSingleDocument(doc) && isType(doc.data, t);
 }
 
 export function isCollectionDocumentOf<K extends RMKeys>(
-  doc: JsonDocument,
+  doc: unknown,
   t: K,
 ): doc is CollectionDocument<K> {
   return isCollectionDocument(doc) && doc.data.every((d) => isType(d, t));

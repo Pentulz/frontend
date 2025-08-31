@@ -112,7 +112,7 @@ const onSubmit = handleSubmit(
   async ({ name, description, agent_id, actions }) => {
     isCreating.value = true;
     const results = await Promise.all(
-      actions.map<Promise<SingleDocument<"jobs">>>(async (v) =>
+      actions.map(async (v) =>
         $fetch("/api/v1/jobs", {
           method: "POST",
           baseURL: apiBase,
