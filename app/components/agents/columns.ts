@@ -2,7 +2,7 @@ import { h } from "vue";
 import type { Agent } from ".";
 import type { ColumnDef } from "@tanstack/vue-table";
 import Header from "../ui/data-table/SortableHeader.vue";
-import CapabilitiesCell from "./CapabilitiesCell.vue";
+import AvailableToolsCell from "./AvailableToolsCell.vue";
 import StatusCell from "./StatusCell.vue";
 import TypeCell from "./TypeCell.vue";
 import ActionsCell from "./ActionsCell.vue";
@@ -71,7 +71,7 @@ export const columns: ColumnDef<Agent>[] = [
     accessorKey: "available_tools",
     header: () => "Available tools",
     cell: ({ row }) =>
-      h(CapabilitiesCell, {
+      h(AvailableToolsCell, {
         availableTools:
           row.getValue<{ cmd: string; version: string }[]>("available_tools"),
       }),
