@@ -28,6 +28,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "~/components/ui/select";
+import { Textarea } from "~/components/ui/textarea";
+import { Input } from "~/components/ui/input";
 import { type Job, getStatus } from "../jobs";
 import { PlusIcon, FileChartColumnIcon } from "lucide-vue-next";
 import { toTypedSchema } from "@vee-validate/zod";
@@ -40,6 +42,8 @@ const {
 } = useRuntimeConfig();
 
 const bodySchema = z.object({
+  name: z.string().min(1),
+  description: z.string().min(1),
   jobs_ids: z
     .array(z.string().length(36, "One of the jobs has an invalid ID"))
     .min(1, "At least one job is needed for a report"),
@@ -159,6 +163,31 @@ const onSubmit = form.handleSubmit(async (values) => {
         </DialogDescription>
       </DialogHeader>
       <form method="POST" class="flex flex-col gap-6" @submit="onSubmit">
+        <FormField v-slot="{ componentField }" name="name">
+          <FormItem>
+            <FormLabel>Name</FormLabel>
+            <FormControl>
+              <Input
+                type="text"
+                placeholder="Enter name"
+                v-bind="componentField"
+              />
+            </FormControl>
+            <FormMessage />
+          </FormItem>
+        </FormField>
+        <FormField v-slot="{ componentField }" name="description">
+          <FormItem>
+            <FormLabel>Description</FormLabel>
+            <FormControl>
+              <Textarea
+                placeholder="Describe this report"
+                v-bind="componentField"
+              />
+            </FormControl>
+            <FormMessage />
+          </FormItem>
+        </FormField>
         <FormField v-slot="{ componentField }" name="jobs_ids">
           <FormItem>
             <FormLabel>Select jobs</FormLabel>
