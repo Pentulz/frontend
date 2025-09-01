@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import type { Job } from ".";
 import {
   DataTableProvider,
   DataTable,
@@ -14,12 +13,6 @@ import {
   type ClientError,
   isCollectionDocumentOf,
 } from "~/lib/api";
-
-type Props = {
-  jobs: Job[];
-};
-
-// const { jobs } = defineProps<Props>();
 
 const {
   public: { apiBase },

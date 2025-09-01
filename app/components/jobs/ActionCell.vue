@@ -6,10 +6,6 @@ type Props = {
 };
 
 const { action } = defineProps<Props>();
-
-const displayedTools = computed(() => {
-  return action;
-});
 </script>
 
 <template>

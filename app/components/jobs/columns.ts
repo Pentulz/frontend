@@ -6,7 +6,6 @@ import ActionsCell from "./ActionsCell.vue";
 import NameCell from "./NameCell.vue";
 import StatusCell from "./StatusCell.vue";
 import AgentCell from "./AgentCell.vue";
-import ToolsCell from "./ToolsCell.vue";
 import { DateTimeCell, SortableHeader } from "~/components/ui/data-table";
 
 export const columns: ColumnDef<Job>[] = [
