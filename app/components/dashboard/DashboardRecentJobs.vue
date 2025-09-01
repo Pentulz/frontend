@@ -38,7 +38,7 @@ const getStatusInfo = (status: string) => {
   }
 };
 
-// Fonction pour obtenir le préfixe du timestamp
+// Function to get timestamp prefix
 const getTimestampPrefix = (status: string) => {
   switch (status) {
     case 'completed':
