@@ -12,3 +12,12 @@ export type Job = {
 >;
 
 export { default as JobsTable } from "./JobsTable.vue";
+
+export const getStatus = (
+  startedAt?: Date,
+  completedAt?: Date,
+): Job["status"] => {
+  if (completedAt) return "Completed";
+  if (startedAt) return "Running";
+  return "Pending";
+};

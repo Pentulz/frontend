@@ -1,5 +1,5 @@
 <script setup>
-import { PlusIcon } from "lucide-vue-next";
+import { CreateReport } from "~/components/forms";
 definePageMeta({
   breadcrumb: "Reports",
   title: "Reports",
@@ -18,10 +18,7 @@ useHead({
           >View and manage security assessment reports</span
         >
       </div>
-      <Button variant="outline">
-        <PlusIcon class="h-6 w-auto" />
-        <span>Generate New Report</span>
-      </Button>
+      <CreateReport />
     </div>
 
     <!-- Table space -->
