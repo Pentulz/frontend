@@ -13,7 +13,7 @@ import {
   type ClientError,
   isCollectionDocumentOf,
 } from "~/lib/api";
-import type { Job } from ".";
+import { type Job, getStatus } from ".";
 
 const {
   public: { apiBase },
@@ -27,12 +27,6 @@ const { pending, error, ...req } = useFetch<JsonDocument, ClientError>(
     baseURL: apiBase,
   },
 );
-
-const getStatus = (startedAt?: Date, completedAt?: Date): Job["status"] => {
-  if (completedAt) return "Completed";
-  if (startedAt) return "Running";
-  return "Pending";
-};
 
 const jobs = computed<Job[]>(() => {
   const doc = req.data.value;
