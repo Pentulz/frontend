@@ -171,7 +171,7 @@ const toolMap = computed<{ [key: string]: SystemTool }>(
 <template>
   <Dialog v-model:open="open">
     <DialogTrigger as-child>
-      <Button variant="outline">
+      <Button variant="outline" class="cursor-pointer">
         <PlayIcon class="size-6" />
         <span>Start New Job</span>
       </Button>
