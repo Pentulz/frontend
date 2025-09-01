@@ -64,21 +64,37 @@ export type SystemToolCollectionDocument = {
   }>;
 };
 
-export type Results = {
-  period?: string;
-  summary?: string;
-  status?: string;
-  warnings?: number;
-  risk_level?: string;
-  total_scans?: number;
-  recommendations?: string[];
-  vulnerabilities_found?: number;
-  healthy_systems?: number;
-  performance_metrics?: {
-    average_cpu?: string;
-    average_memory?: string;
-    network_latency?: string;
+export type ReportResult = {
+  metadata: {
+    name: string;
+    report_id: string;
+    created_at: string;
+    total_jobs: number;
+    total_findings: number;
   };
+
+  summary: {
+    tools_used: string[];
+    total_findings: number;
+    severity_distribution: {
+      info: number;
+      low: number;
+      medium: number;
+      high: number;
+      critical: number;
+    };
+  };
+
+  finding_by_tool: {
+    [key: string]: {
+      tool_name: string;
+      jobs_count: number;
+      finding: unknown[];
+      statistics: { [key: string]: unknown };
+    };
+  };
+
+  all_findings: unknown[];
 };
 
 type ResourceMap = {
@@ -100,23 +116,27 @@ type ResourceMap = {
     platform: PlatformType;
   }>;
   jobs: {
+    id?: string;
     name: string;
+    description: string;
     agent_id: string;
     action: {
-      name: string;
       cmd: string;
       variant?: string;
-      args?: { [key: string]: string | number | boolean } | string[];
-    }; // TODO: specify
-    description?: string;
+      args: string[];
+    };
+    // ISO 8601 / RFC 3339 date
     started_at?: string;
     completed_at?: string;
     created_at?: string;
-    results?: Results;
+    results: unknown;
+    // Whether the job is successful (only if completed_at is set)
+    success?: boolean;
   };
   reports: {
-    id: string;
-    results: Results;
+    name: string;
+    description: string;
+    results: ReportResult;
     created_at: string;
   };
 };
