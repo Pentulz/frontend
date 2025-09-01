@@ -28,13 +28,13 @@ const props = withDefaults(defineProps<Props>(), {
 const getStatusInfo = (status: string) => {
   switch (status) {
     case 'completed':
-      return { variant: 'default', text: 'completed', bgColor: 'bg-green-100 text-green-800' };
+      return { text: 'completed', bgColor: 'bg-green-100 text-green-800' };
     case 'running':
-      return { variant: 'secondary', text: 'running', bgColor: 'bg-blue-100 text-blue-800' };
+      return { text: 'running', bgColor: 'bg-blue-100 text-blue-800' };
     case 'failed':
-      return { variant: 'destructive', text: 'failed', bgColor: 'bg-red-100 text-red-800' };
+      return { text: 'failed', bgColor: 'bg-red-100 text-red-800' };
     default:
-      return { variant: 'outline', text: status, bgColor: 'bg-gray-100 text-gray-800' };
+      return { text: status, bgColor: 'bg-gray-100 text-gray-800' };
   }
 };
 
