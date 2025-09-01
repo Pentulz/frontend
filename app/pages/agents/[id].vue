@@ -37,21 +37,7 @@ const agent = computed(() => {
   };
 });
 
-// Watch for errors
-watchEffect(() => {
-  if (error.value) {
-    const apiErrors = error.value.data?.errors || [];
-    if (apiErrors.length) {
-      const firstError = apiErrors[0];
-      throw createError({
-        statusCode: parseInt(firstError.status, 10),
-        statusMessage: firstError.detail,
-        fatal: true,
-      });
-    }
-  }
-});
-
+useBackendError(error);
 const showSkeleton = useSkeleton(pending);
 </script>
 
