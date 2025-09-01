@@ -181,7 +181,7 @@ const onSubmit = form.handleSubmit(async (values) => {
             <FormLabel>Description</FormLabel>
             <FormControl>
               <Textarea
-                placeholder="Describe this agent"
+                placeholder="Describe this report"
                 v-bind="componentField"
               />
             </FormControl>
