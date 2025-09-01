@@ -1,20 +1,25 @@
 <script setup lang="ts">
 import { Badge } from "#components";
+import type { Agent } from ".";
+
+type Tool = Agent["available_tools"][0];
 
 type Props = {
-  availableTools?: string[];
+  availableTools?: Tool[];
 };
 
-const props = withDefaults(defineProps<Props>(), {
-  availableTools: () => [],
-});
+const { availableTools = [] } = defineProps<Props>();
 
-const displayedAvailableTools = computed(() => {
-  if (props.availableTools.length <= 3) return props.availableTools;
+const displayedAvailableTools = computed<Tool[]>(() => {
+  if (availableTools.length <= 3) return availableTools;
 
   return [
-    ...props.availableTools.slice(0, 2),
-    `+${props.availableTools.length - 2}`,
+    ...availableTools.slice(0, 2),
+    {
+      cmd: `+${availableTools.length - 2}`,
+      args: [],
+      version: undefined,
+    },
   ];
 });
 </script>
@@ -23,10 +28,10 @@ const displayedAvailableTools = computed(() => {
   <div class="flex flex-row gap-2">
     <Badge
       v-for="tool in displayedAvailableTools"
-      :key="tool"
+      :key="tool.cmd"
       variant="outline"
     >
-      {{ tool.cmd }}
+      {{ tool.cmd }}<span v-if="tool.version">: {{ tool.version }}</span>
     </Badge>
   </div>
 </template>

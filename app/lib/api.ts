@@ -85,23 +85,21 @@ type ResourceMap = {
   tools: {
     cmd: string;
     args: string[];
-  } & Partial<{
     version?: string;
-  }>;
+  };
   agents: {
     name: string;
     description: string;
     token: string;
-    last_seen_at: Date;
-    created_at: Date;
-    jobs: Ref<"jobs">[];
+    last_seen_at: string;
+    created_at: string;
+    jobs: (Ref<"jobs"> & { id: string })[];
+    available_tools: Ref<"tools">[];
   } & Partial<{
     hostname: string;
     platform: PlatformType;
-    available_tools: Ref<"tools">[];
   }>;
   jobs: {
-    id: string;
     name: string;
     agent_id: string;
     action: unknown; // TODO: specify

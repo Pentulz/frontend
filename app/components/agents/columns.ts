@@ -3,8 +3,8 @@ import type { Agent } from ".";
 import type { ColumnDef } from "@tanstack/vue-table";
 import Header from "../ui/data-table/SortableHeader.vue";
 import AvailableToolsCell from "./AvailableToolsCell.vue";
-import StatusCell from "./StatusCell.vue";
 import ActionsCell from "./ActionsCell.vue";
+import { DateTimeCell } from "~/components/ui/data-table";
 
 export const columns: ColumnDef<Agent>[] = [
   {
@@ -57,13 +57,25 @@ export const columns: ColumnDef<Agent>[] = [
           row.getValue("platform"),
         ),
       ]),
+    filterFn: "arrIncludesSome",
+  },
+  {
+    accessorKey: "created_at",
+    header: ({ column }) =>
+      h(Header<Agent, unknown>, { column }, () => "Created at"),
+    cell: ({ row }) =>
+      h(DateTimeCell, {
+        datetime: row.getValue<Agent["created_at"]>("created_at"),
+      }),
   },
   {
     accessorKey: "last_seen_at",
     header: ({ column }) =>
       h(Header<Agent, unknown>, { column }, () => "Last seen at"),
     cell: ({ row }) =>
-      h(StatusCell, { status: row.getValue<string>("last_seen_at") }),
+      h(DateTimeCell, {
+        datetime: row.getValue<Agent["last_seen_at"]>("last_seen_at"),
+      }),
   },
 
   {
@@ -72,30 +84,18 @@ export const columns: ColumnDef<Agent>[] = [
     cell: ({ row }) =>
       h(AvailableToolsCell, {
         availableTools:
-          row.getValue<{ cmd: string; version: string }[]>("available_tools"),
+          row.getValue<Agent["available_tools"]>("available_tools"),
       }),
     // Fix: Return individual tool commands, not the whole objects
     getUniqueValues: (row) => {
-      const tools = row.available_tools ?? [];
-      return tools.map((tool) => tool.cmd); // Extract just the command names
+      return row.available_tools.map((v) => v.cmd);
     },
     // Fix: Add validation for filterValue
-    filterFn: (row, filterValue: unknown) => {
-      const tools = row.getValue<{ cmd: string }[]>("available_tools") ?? [];
-
-      // Ensure filterValue is an array
-      const filterArray = Array.isArray(filterValue) ? filterValue : [];
-
-      console.log("Row tools:", tools);
-      console.log("Filter value:", filterArray);
-      console.log("Filter value type:", typeof filterValue, filterValue);
-
-      // If no filters selected, show all rows
-      if (filterArray.length === 0) return true;
-
-      return tools.some((tool) => filterArray.includes(tool.cmd));
+    filterFn: (row, colID, filterValue: string[]) => {
+      return filterValue.every((filter) =>
+        row.original.available_tools.map(({ cmd }) => cmd).includes(filter),
+      );
     },
-    defaultFilterValue: [],
   },
 
   {
@@ -110,7 +110,7 @@ export const columns: ColumnDef<Agent>[] = [
       h(
         "div",
         { class: "text-sm font-medium text-muted-foreground" },
-        row.getValue("jobs").length,
+        row.getValue<Agent["jobs"]>("jobs").length,
       ),
   },
   {

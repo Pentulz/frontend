@@ -17,19 +17,29 @@ const { table } = useDataTable<Agent, unknown>();
 
 const platforms = computed(() =>
   Array.from<string>(
-    table.getColumn("platform")?.getFacetedUniqueValues().keys() ?? [],
+    table
+      .getColumn("platform")
+      ?.getFacetedUniqueValues()
+      .keys()
+      .filter(Boolean) ?? [],
   ),
 );
 
-const availableTools = computed(() => {
-  const column = table.getColumn("available_tools");
-  if (!column) return [];
+// const availableTools = computed(() => {
+//   const column = table.getColumn("available_tools");
+//   if (!column) return [];
+//
+//   const facetedValues = column.getFacetedUniqueValues();
+//   const allToolCommands = Array.from(facetedValues.keys());
+//
+//   return Array.from(new Set(allToolCommands)).sort();
+// });
 
-  const facetedValues = column.getFacetedUniqueValues();
-  const allToolCommands = Array.from(facetedValues.keys());
-
-  return Array.from(new Set(allToolCommands)).sort();
-});
+const availableTools = computed(() =>
+  Array.from<string>(
+    table.getColumn("available_tools")?.getFacetedUniqueValues().keys() ?? [],
+  ),
+);
 
 const searchId = useId();
 const searchByHostname = useId();
@@ -44,7 +54,7 @@ const searchByHostname = useId();
     </CardHeader>
     <CardContent class="grid grid-cols-1 lg:grid-cols-4 gap-4">
       <div class="flex flex-col gap-2">
-        <Label :for="searchId">Search</Label>
+        <Label :for="searchId">Search by name</Label>
         <div class="relative w-full max-w-sm items-center">
           <Input
             :id="searchId"
@@ -64,7 +74,7 @@ const searchByHostname = useId();
       </div>
 
       <div class="flex flex-col gap-2">
-        <Label :for="searchByHostname">Search</Label>
+        <Label :for="searchByHostname">Search by hostname</Label>
         <div class="relative w-full max-w-sm items-center">
           <Input
             :id="searchByHostname"
