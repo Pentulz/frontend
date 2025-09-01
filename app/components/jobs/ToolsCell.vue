@@ -2,7 +2,7 @@
 import { Badge } from "#components";
 
 type Props = {
-  tools: string[];
+  action: string[];
 };
 
 const { tools } = defineProps<Props>();

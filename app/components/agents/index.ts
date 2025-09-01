@@ -1,14 +1,8 @@
-export interface Agent {
-  id: string;
-  name: string;
-  description: string;
-  hostname: string;
-  status: string;
-  type: string;
-  os: string;
-  ip: string;
-  available_tools: string[];
-  jobs: number;
-}
+import type { Entity } from "~/lib/api";
+
+export type Agent = Omit<
+  Entity<"agents">["attributes"],
+  "last_seen_at" | "created_at"
+> & { id: string; last_seen_at?: Date; created_at?: Date };
 
 export { default as AgentsTable } from "./AgentsTable.vue";

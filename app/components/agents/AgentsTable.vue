@@ -19,6 +19,7 @@ import {
   type ClientError,
   isCollectionDocumentOf,
 } from "~/lib/api";
+import type { Agent } from ".";
 
 const {
   public: { apiBase },
@@ -40,10 +41,14 @@ const data = computed(() => {
   if (!isCollectionDocumentOf(doc, "agents")) return [];
 
   // Extract the collection items from the document
-  return doc.data.map((item) => ({
-    id: item.id,
-    ...item.attributes,
-  }));
+  return doc.data.map<Agent>(
+    ({ id, attributes: { last_seen_at, created_at, ...rest } }) => ({
+      ...rest,
+      id,
+      last_seen_at: last_seen_at ? new Date(last_seen_at) : undefined,
+      created_at: created_at ? new Date(created_at) : undefined,
+    }),
+  );
 });
 </script>
 <template>
