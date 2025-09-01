@@ -24,7 +24,7 @@ const props = withDefaults(defineProps<Props>(), {
   jobs: () => []
 });
 
-// Fonction pour obtenir la variante et le texte du badge selon le statut
+// Function to get badge variant and text based on status
 const getStatusInfo = (status: string) => {
   switch (status) {
     case 'completed':
