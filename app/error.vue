@@ -1,7 +1,10 @@
 <script setup lang="ts">
 import type { NuxtError } from "#app";
+import { Button } from "~/components/ui/button";
 
-const props = defineProps({
+const { back } = useRouter();
+
+const { error = undefined } = defineProps({
   error: Object as () => NuxtError,
 });
 </script>
@@ -24,15 +27,11 @@ const props = defineProps({
           class="mt-6 text-lg font-medium text-pretty text-gray-500 sm:text-xl/8"
         ></p>
         <div class="mt-10 flex items-center justify-center gap-x-6">
-          <NuxtLink
-            to="/"
-            class="rounded-md bg-indigo-600 px-3.5 py-2.5 text-sm font-semibold text-white shadow-xs hover:bg-indigo-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-            >Go back home</NuxtLink
-          >
+          <Button as-child>
+            <NuxtLink to="/">Dashboard</NuxtLink>
+          </Button>
 
-          <a href="#" class="text-sm font-semibold text-gray-900"
-            >Contact support <span aria-hidden="true">&rarr;</span></a
-          >
+          <Button variant="outline" @click="back"> Go back </Button>
         </div>
       </div>
     </main>

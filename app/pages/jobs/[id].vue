@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { type JsonDocument, type ClientError } from "~/lib/api";
+import type { JsonDocument, ClientError } from "~/lib/api";
 
 definePageMeta({
   breadcrumb: `Job`,
@@ -11,14 +11,15 @@ const {
   public: { apiBase },
 } = useRuntimeConfig();
 
-const { data, pending, error } = useFetch<JsonDocument, ClientError>(
-  `/api/v1/jobs/${route.params.id}`,
-  {
-    baseURL: apiBase,
-    server: false,
-    lazy: false,
-  },
-);
+const {
+  data: _data,
+  pending: _pending,
+  error,
+} = useFetch<JsonDocument, ClientError>(`/api/v1/jobs/${route.params.id}`, {
+  baseURL: apiBase,
+  server: false,
+  lazy: false,
+});
 
 // Watch for errors
 watchEffect(() => {
