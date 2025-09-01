@@ -16,20 +16,15 @@ import {
 import { DateTimeCell } from "~/components/ui/data-table";
 import type { Component } from "vue";
 import type { BadgeVariants } from "~/components/ui/badge";
+import type { Job } from ".";
 
-type Props = {
-  started_at: string | Date | null;
-  completed_at: string | Date | null;
-};
+type Props = Pick<Job, "started_at" | "completed_at" | "status">;
 
-const { started_at, completed_at } = defineProps<Props>();
-
-// Compute the status based on the datetime values
-const status = computed(() => {
-  if (completed_at) return "Completed";
-  if (started_at) return "Running";
-  return "Pending";
-});
+const {
+  started_at = undefined,
+  completed_at = undefined,
+  status,
+} = defineProps<Props>();
 
 const icons: { [key: string]: Component } = {
   Completed: CircleCheckBig,
@@ -45,8 +40,8 @@ const variants: { [key: string]: BadgeVariants["variant"] } = {
   Running: "secondary",
 };
 
-const icon = computed(() => icons[status.value] ?? CircleQuestionMark);
-const variant = computed(() => variants[status.value] ?? "default");
+const icon = computed(() => icons[status] ?? CircleQuestionMark);
+const variant = computed(() => variants[status] ?? "default");
 
 // Check if we have any datetime info to show in tooltip
 const hasDateTimeInfo = computed(() => started_at || completed_at);

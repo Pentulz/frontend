@@ -20,34 +20,15 @@ export const columns: ColumnDef<Job>[] = [
     id: "status", // Use 'id' instead of 'accessorKey' since we're computing this
     header: ({ column }) =>
       h(SortableHeader<Job, unknown>, { column }, () => "Status"),
-    cell: ({ row }) => {
-      const startedAt = row.original.started_at;
-      const completedAt = row.original.completed_at;
-      return h(StatusCell, {
-        started_at: startedAt,
-        completed_at: completedAt,
-      });
-    },
-    // For filtering purposes, compute the status value
-    getUniqueValues: (row) => {
-      const startedAt = row.original.started_at;
-      const completedAt = row.original.completed_at;
-
-      if (completedAt) return "Completed";
-      if (startedAt) return "Running";
-      return "Pending";
-    },
-    filterFn: (row, columnId, filterValue: string[]) => {
-      const startedAt = row.original.started_at;
-      const completedAt = row.original.completed_at;
-
-      let status: string;
-      if (completedAt) status = "Completed";
-      else if (startedAt) status = "Running";
-      else status = "Pending";
-
-      return filterValue?.includes(status) ?? false;
-    },
+    cell: ({ row }) =>
+      h(StatusCell, {
+        started_at: row.original.started_at,
+        completed_at: row.original.completed_at,
+        status: row.original.status,
+      }),
+    //For filtering purposes, compute the status value
+    filterFn: (row, _, values: string[]) =>
+      !values.length || values.includes(row.original.status),
   },
   {
     accessorKey: "agent_id",
@@ -61,8 +42,7 @@ export const columns: ColumnDef<Job>[] = [
     accessorKey: "action",
     header: () => "Action",
     cell: ({ row }) =>
-      h(ActionCell, { action: row.getValue<string[]>("action") }),
-    getUniqueValues: (row) => row.action ?? [],
+      h(ActionCell, { action: row.getValue<Job["action"]>("action") }),
   },
   {
     accessorKey: "created_at",

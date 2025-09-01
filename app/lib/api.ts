@@ -102,14 +102,18 @@ type ResourceMap = {
   jobs: {
     name: string;
     agent_id: string;
-    action: unknown; // TODO: specify
-  } & Partial<{
-    description: string;
-    started_at: Date;
-    completed_at: Date;
-    created_at: Date;
-    results: Results;
-  }>;
+    action: {
+      name: string;
+      cmd: string;
+      variant?: string;
+      args?: { [key: string]: string | number | boolean } | string[];
+    }; // TODO: specify
+    description?: string;
+    started_at?: string;
+    completed_at?: string;
+    created_at?: string;
+    results?: Results;
+  };
   reports: {
     id: string;
     results: Results;

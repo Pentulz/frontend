@@ -15,44 +15,6 @@ import type { Job } from ".";
 
 const { table } = useDataTable<Job, unknown>();
 
-// Safe function to get faceted unique values with error handling
-const getSafeFacetedValues = (columnId: string): string[] => {
-  try {
-    const column = table.getColumn(columnId);
-    if (!column) {
-      console.warn(`Column '${columnId}' not found`);
-      return [];
-    }
-
-    const facetedValues = column.getFacetedUniqueValues();
-    if (!facetedValues) {
-      console.warn(`No faceted values for column '${columnId}'`);
-      return [];
-    }
-
-    // Extra safety check for the Map object
-    if (typeof facetedValues.keys !== "function") {
-      console.warn(`Faceted values for '${columnId}' is not a Map`);
-      return [];
-    }
-
-    const keys = Array.from(facetedValues.keys());
-    // Filter out null, undefined, and empty strings
-    const validKeys = keys.filter(
-      (key) => key != null && key !== "" && key !== undefined,
-    );
-
-    console.log(`Column '${columnId}' faceted values:`, validKeys);
-    return validKeys;
-  } catch (error) {
-    console.error(
-      `Error getting faceted values for column '${columnId}':`,
-      error,
-    );
-    return [];
-  }
-};
-
 // Since status is computed from started_at/completed_at, provide manual status options
 // This avoids calling getFacetedUniqueValues() which is causing the error
 const statuses = computed(() => {
@@ -60,20 +22,19 @@ const statuses = computed(() => {
   return ["Pending", "Running", "Completed"];
 });
 
-const agents = computed(() => getSafeFacetedValues("agent_id"));
+const agents = computed(() =>
+  Array.from<string>(
+    table
+      .getColumn("agent_id")
+      ?.getFacetedUniqueValues()
+      .keys()
+      .filter(Boolean) ?? [],
+  ),
+);
 
 const searchId = useId();
 const statusId = useId();
 const agentId = useId();
-
-// Debug logging
-watchEffect(() => {
-  console.log("Job filters state:", {
-    statuses: statuses.value,
-    agents: agents.value,
-    tableColumns: table.getAllColumns().map((col) => col.id),
-  });
-});
 </script>
 
 <template>
@@ -115,12 +76,7 @@ watchEffect(() => {
               (table.getColumn('status')?.getFilterValue() as string[]) ?? []
             "
             @update:model-value="
-              (value) => {
-                console.log('Status filter value:', value);
-                table
-                  .getColumn('status')
-                  ?.setFilterValue(value?.length ? value : undefined);
-              }
+              (value) => table.getColumn('status')?.setFilterValue(value)
             "
           >
             <SelectTrigger class="lg:max-w-sm w-full">
@@ -154,36 +110,30 @@ watchEffect(() => {
         <Label :for="agentId">Agent</Label>
         <div class="flex flex-row gap-2">
           <Select
-            v-if="agents.length > 0"
             multiple
             :model-value="
               (table.getColumn('agent_id')?.getFilterValue() as string[]) ?? []
             "
             @update:model-value="
-              (value) => {
-                console.log('Agent filter value:', value);
-                table
-                  .getColumn('agent_id')
-                  ?.setFilterValue(value?.length ? value : undefined);
-              }
+              table.getColumn('agent_id')?.setFilterValue($event)
             "
           >
             <SelectTrigger class="lg:max-w-sm w-full">
-              <SelectValue placeholder="All agents" />
+              <SelectValue
+                :placeholder="
+                  agents.length ? 'All agents' : 'No agents available'
+                "
+              />
             </SelectTrigger>
-            <SelectContent>
+            <SelectContent v-if="agents.length">
               <SelectItem v-for="agent in agents" :key="agent" :value="agent">
                 {{ agent }}
               </SelectItem>
             </SelectContent>
           </Select>
-          <div v-else class="flex items-center text-sm text-muted-foreground">
-            No agents available
-          </div>
           <Button
             variant="outline"
             size="icon"
-            :disabled="agents.length === 0"
             @click="table.getColumn('agent_id')?.setFilterValue(undefined)"
           >
             <RotateCcwIcon class="size-4" />

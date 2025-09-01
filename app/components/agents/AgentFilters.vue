@@ -25,16 +25,6 @@ const platforms = computed(() =>
   ),
 );
 
-// const availableTools = computed(() => {
-//   const column = table.getColumn("available_tools");
-//   if (!column) return [];
-//
-//   const facetedValues = column.getFacetedUniqueValues();
-//   const allToolCommands = Array.from(facetedValues.keys());
-//
-//   return Array.from(new Set(allToolCommands)).sort();
-// });
-
 const availableTools = computed(() =>
   Array.from<string>(
     table.getColumn("available_tools")?.getFacetedUniqueValues().keys() ?? [],
