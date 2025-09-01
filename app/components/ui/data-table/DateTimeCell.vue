@@ -9,12 +9,13 @@ const { datetime = null } = defineProps<Props>();
 <template>
   <div class="flex flex-col">
     <template v-if="datetime">
-      <NuxtTime :datetime class="text-sm font-medium" />
+      <NuxtTime :datetime locale="fr-FR" class="text-sm font-medium" />
       <NuxtTime
         :datetime
         hour="2-digit"
         minute="2-digit"
         second="2-digit"
+        locale="fr-FR"
         class="text-sm font-medium text-muted-foreground"
       />
     </template>

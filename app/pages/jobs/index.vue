@@ -1,5 +1,4 @@
 <script setup>
-import { data } from "~/assets/data/jobs";
 import { CreateJob } from "~/components/forms";
 definePageMeta({
   breadcrumb: "Jobs",
@@ -23,6 +22,6 @@ useHead({
     </div>
 
     <!-- Table space -->
-    <JobsTable :jobs="data" />
+    <JobsTable />
   </div>
 </template>

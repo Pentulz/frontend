@@ -15,21 +15,28 @@ import type { Job } from ".";
 
 const { table } = useDataTable<Job, unknown>();
 
-const statuses = computed(() =>
-  Array.from<string>(
-    table.getColumn("status")?.getFacetedUniqueValues().keys() ?? [],
-  ),
-);
+// Since status is computed from started_at/completed_at, provide manual status options
+// This avoids calling getFacetedUniqueValues() which is causing the error
+const statuses = computed(() => {
+  // Don't try to get faceted values for computed columns - just return the possible values
+  return ["Pending", "Running", "Completed"];
+});
 
 const agents = computed(() =>
   Array.from<string>(
-    table.getColumn("agentId")?.getFacetedUniqueValues().keys() ?? [],
+    table
+      .getColumn("agent_id")
+      ?.getFacetedUniqueValues()
+      .keys()
+      .filter(Boolean) ?? [],
   ),
 );
 
 const searchId = useId();
 const statusId = useId();
+const agentId = useId();
 </script>
+
 <template>
   <Card>
     <CardHeader>
@@ -45,7 +52,7 @@ const statusId = useId();
           <Input
             :id="searchId"
             type="text"
-            placeholder="Search jobs..."
+            placeholder="Search jobs by name..."
             class="pl-8"
             @update:model-value="
               table.getColumn('name')?.setFilterValue($event)
@@ -63,12 +70,13 @@ const statusId = useId();
         <Label :for="statusId">Status</Label>
         <div class="flex flex-row gap-2">
           <Select
+            v-if="statuses.length > 0"
             multiple
             :model-value="
               (table.getColumn('status')?.getFilterValue() as string[]) ?? []
             "
             @update:model-value="
-              table.getColumn('status')?.setFilterValue($event)
+              (value) => table.getColumn('status')?.setFilterValue(value)
             "
           >
             <SelectTrigger class="lg:max-w-sm w-full">
@@ -84,9 +92,13 @@ const statusId = useId();
               </SelectItem>
             </SelectContent>
           </Select>
+          <div v-else class="flex items-center text-sm text-muted-foreground">
+            No statuses available
+          </div>
           <Button
             variant="outline"
             size="icon"
+            :disabled="statuses.length === 0"
             @click="table.getColumn('status')?.setFilterValue(undefined)"
           >
             <RotateCcwIcon class="size-4" />
@@ -95,21 +107,25 @@ const statusId = useId();
       </div>
 
       <div class="flex flex-col gap-2">
-        <Label>Agent</Label>
+        <Label :for="agentId">Agent</Label>
         <div class="flex flex-row gap-2">
           <Select
             multiple
             :model-value="
-              (table.getColumn('agentId')?.getFilterValue() as string[]) ?? []
+              (table.getColumn('agent_id')?.getFilterValue() as string[]) ?? []
             "
             @update:model-value="
-              table.getColumn('agentId')?.setFilterValue($event)
+              table.getColumn('agent_id')?.setFilterValue($event)
             "
           >
             <SelectTrigger class="lg:max-w-sm w-full">
-              <SelectValue placeholder="All agents" />
+              <SelectValue
+                :placeholder="
+                  agents.length ? 'All agents' : 'No agents available'
+                "
+              />
             </SelectTrigger>
-            <SelectContent>
+            <SelectContent v-if="agents.length">
               <SelectItem v-for="agent in agents" :key="agent" :value="agent">
                 {{ agent }}
               </SelectItem>
@@ -118,7 +134,7 @@ const statusId = useId();
           <Button
             variant="outline"
             size="icon"
-            @click="table.getColumn('agentId')?.setFilterValue(undefined)"
+            @click="table.getColumn('agent_id')?.setFilterValue(undefined)"
           >
             <RotateCcwIcon class="size-4" />
           </Button>

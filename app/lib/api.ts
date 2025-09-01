@@ -85,33 +85,35 @@ type ResourceMap = {
   tools: {
     cmd: string;
     args: string[];
-  } & Partial<{
     version?: string;
-  }>;
+  };
   agents: {
     name: string;
     description: string;
     token: string;
-    last_seen_at: Date;
-    created_at: Date;
-    jobs: Ref<"jobs">[];
+    last_seen_at: string;
+    created_at: string;
+    jobs: (Ref<"jobs"> & { id: string })[];
+    available_tools: Ref<"tools">[];
   } & Partial<{
     hostname: string;
     platform: PlatformType;
-    available_tools: Ref<"tools">[];
   }>;
   jobs: {
-    id: string;
     name: string;
     agent_id: string;
-    action: unknown; // TODO: specify
-  } & Partial<{
-    description: string;
-    started_at: Date;
-    completed_at: Date;
-    created_at: Date;
-    results: Results;
-  }>;
+    action: {
+      name: string;
+      cmd: string;
+      variant?: string;
+      args?: { [key: string]: string | number | boolean } | string[];
+    }; // TODO: specify
+    description?: string;
+    started_at?: string;
+    completed_at?: string;
+    created_at?: string;
+    results?: Results;
+  };
   reports: {
     id: string;
     results: Results;
