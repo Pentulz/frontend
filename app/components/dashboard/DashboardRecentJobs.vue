@@ -24,21 +24,6 @@ const props = withDefaults(defineProps<Props>(), {
   jobs: () => []
 });
 
-// Fonction pour obtenir la variante et le texte du badge selon le statut
-const getStatusInfo = (status: string) => {
-  switch (status) {
-    case 'completed':
-      return { variant: 'default', text: 'completed', bgColor: 'bg-green-100 text-green-800' };
-    case 'running':
-      return { variant: 'secondary', text: 'running', bgColor: 'bg-blue-100 text-blue-800' };
-    case 'failed':
-      return { variant: 'destructive', text: 'failed', bgColor: 'bg-red-100 text-red-800' };
-    default:
-      return { variant: 'outline', text: status, bgColor: 'bg-gray-100 text-gray-800' };
-  }
-};
-
-// Fonction pour obtenir le préfixe du timestamp
 const getTimestampPrefix = (status: string) => {
   switch (status) {
     case 'completed':
