@@ -15,7 +15,7 @@ RUN pnpm i
 COPY . ./
 
 # Build the project
-RUN pnpm run build
+RUN pnpm run postinstall && pnpm run build
 
 # Build Stage 2
 
