@@ -13,6 +13,9 @@ const schemas = [
     actions: z.array(z.object({ name: z.string().min(1).max(64) })).min(1),
   }),
   z.object({
+    name: z.string().min(1).max(50),
+    description: z.string().min(1).max(400),
+    agent_id: z.string().min(1).max(64),
     actions: z.array(
       z.object({
         name: z.string().min(1).max(64),
@@ -35,15 +38,20 @@ export type StepValues = {
 // Define the schema for each step of the stepper
 export const stepSchemas = schemas.map((s) => toTypedSchema(s));
 
-type UnionToIntersection<U> = (
-  U extends unknown ? (x: U) => unknown : never
-) extends (x: infer I) => unknown
-  ? I
-  : never;
-
 type Prettify<T> = { [K in keyof T]: T[K] } & {};
 
-// Final type once we submit the form
-export type MergedValues = Prettify<
-  UnionToIntersection<StepValues[keyof StepValues]>
->;
+type MergeRight<A, B> = Omit<A, keyof B> & B;
+
+type ReduceRightBias<
+  T extends readonly unknown[],
+  Acc = object,
+> = T extends readonly [infer H, ...infer R]
+  ? ReduceRightBias<R, MergeRight<Acc, H>>
+  : Acc;
+
+type InferredTuple<T extends readonly z.ZodTypeAny[]> = {
+  [I in keyof T]: z.infer<T[I]>;
+};
+
+type StepTuple = InferredTuple<typeof schemas>;
+export type MergedValues = Prettify<ReduceRightBias<StepTuple>>;
