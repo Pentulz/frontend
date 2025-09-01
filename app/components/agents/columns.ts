@@ -4,20 +4,16 @@ import type { ColumnDef } from "@tanstack/vue-table";
 import Header from "../ui/data-table/SortableHeader.vue";
 import AvailableToolsCell from "./AvailableToolsCell.vue";
 import ActionsCell from "./ActionsCell.vue";
-import { DateTimeCell } from "~/components/ui/data-table";
+import NameCell from "./NameCell.vue";
+import { DateTimeCell, SortableHeader } from "~/components/ui/data-table";
 
 export const columns: ColumnDef<Agent>[] = [
   {
     accessorKey: "name",
-    header: ({ column }) => h(Header<Agent, unknown>, { column }, () => "Name"),
+    header: ({ column }) =>
+      h(SortableHeader<Agent, unknown>, { column }, () => "Name"),
     cell: ({ row }) =>
-      h("div", { class: "flex flex-col" }, [
-        h(
-          "span",
-          { class: "text-sm font-medium text-muted-foreground" },
-          row.getValue("name"),
-        ),
-      ]),
+      h(NameCell, { name: row.getValue<string>("name"), id: row.original.id }),
   },
   {
     accessorKey: "description",
@@ -27,7 +23,10 @@ export const columns: ColumnDef<Agent>[] = [
       h("div", { class: "flex flex-col" }, [
         h(
           "span",
-          { class: "text-sm font-medium text-muted-foreground" },
+          {
+            class:
+              "text-sm font-medium text-muted-foreground overflow-hidden text-ellipsis",
+          },
           row.getValue("description"),
         ),
       ]),
@@ -71,7 +70,7 @@ export const columns: ColumnDef<Agent>[] = [
   {
     accessorKey: "last_seen_at",
     header: ({ column }) =>
-      h(Header<Agent, unknown>, { column }, () => "Last seen at"),
+      h(SortableHeader<Agent, unknown>, { column }, () => "Last Seen At"),
     cell: ({ row }) =>
       h(DateTimeCell, {
         datetime: row.getValue<Agent["last_seen_at"]>("last_seen_at"),

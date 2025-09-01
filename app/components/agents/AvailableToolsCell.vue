@@ -9,27 +9,15 @@ type Props = {
 };
 
 const { availableTools = [] } = defineProps<Props>();
-
-const displayedAvailableTools = computed<Tool[]>(() => {
-  if (availableTools.length <= 3) return availableTools;
-
-  return [
-    ...availableTools.slice(0, 2),
-    {
-      cmd: `+${availableTools.length - 2}`,
-      args: [],
-      version: undefined,
-    },
-  ];
-});
 </script>
 
 <template>
-  <div class="flex flex-row gap-2">
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-2 auto-rows-auto">
     <Badge
-      v-for="tool in displayedAvailableTools"
+      v-for="tool in availableTools"
       :key="tool.cmd"
       variant="outline"
+      class="w-full justify-center py-1 px-3"
     >
       {{ tool.cmd }}<span v-if="tool.version">: {{ tool.version }}</span>
     </Badge>
