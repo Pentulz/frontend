@@ -9,22 +9,16 @@ const props = withDefaults(defineProps<Props>(), {
   availableTools: () => [],
 });
 
-const displayedAvailableTools = computed(() => {
-  if (props.availableTools.length <= 3) return props.availableTools;
-
-  return [
-    ...props.availableTools.slice(0, 2),
-    `+${props.availableTools.length - 2}`,
-  ];
-});
+const displayedAvailableTools = computed(() => props.availableTools);
 </script>
 
 <template>
-  <div class="flex flex-row gap-2">
+  <div class="grid grid-cols-2 gap-2 auto-rows-auto">
     <Badge
       v-for="tool in displayedAvailableTools"
       :key="tool"
       variant="outline"
+      class="w-full justify-center"
     >
       {{ tool.cmd }}
     </Badge>
