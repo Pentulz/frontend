@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import MergedArtifacts from "~/components/report/MergedArtifacts.vue";
+import VulnerabilitiesFound from "~/components/report/VulnerabilitiesFound.vue";
 
 definePageMeta({
   breadcrumb: `Report`,
@@ -49,7 +50,9 @@ const artifacts = computed(() => {
         </template>
 
         <template v-else-if="report">
-          <h1 class="text-3xl leading-9 font-bold">{{ report.id }}</h1>
+          <h1 class="text-3xl leading-9 font-bold capitalize">
+            {{ report.name }}
+          </h1>
           <span class="text-base leading-6 font-normal text-muted-foreground"
             >Report ID: {{ report.id }}</span
           >
@@ -70,12 +73,11 @@ const artifacts = computed(() => {
       </div>
       <div class="flex flex-col gap-4">
         <template v-if="showSkeleton">
-          <Skeleton class="w-full h-[20dvh]" />
-          <Skeleton class="w-full h-[50dvh]" />
+          <Skeleton class="w-full h-[70dvh]" />
         </template>
 
         <template v-else>
-          <div>Content</div>
+          <VulnerabilitiesFound :finding="report?.results.all_findings ?? []" />
         </template>
       </div>
     </div>

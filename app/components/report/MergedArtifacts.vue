@@ -67,7 +67,9 @@ const humanBytes = (bytes: number) => {
 
             <!-- Source Job -->
             <td class="px-4 py-3">
-              <span class="font-mono">{{ a.id }}</span>
+              <NuxtLink :to="`/jobs/${a.id}`">
+                <span class="font-mono hover:underline">{{ a.id }}</span>
+              </NuxtLink>
             </td>
 
             <!-- Action -->
