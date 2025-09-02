@@ -1,4 +1,13 @@
-<script setup>
+<script setup lang="ts">
+import { useAgents, useJobs, useReports } from "~/composables/use-api";
+import type { StatCard } from "~/components/dashboard/DashboardStats.vue";
+import {
+  ActivityIcon,
+  ServerIcon,
+  FileChartColumnIcon,
+  TrendingUpIcon,
+} from "lucide-vue-next";
+
 definePageMeta({
   breadcrumb: "Dashboard",
   title: "Dashboard",
@@ -7,26 +16,6 @@ definePageMeta({
 useHead({
   title: "Dashboard",
 });
-
-// Données des statistiques
-const dashboardStats = [
-  {
-    title: "Total Jobs",
-    value: 1234,
-  },
-  {
-    title: "Active Agents",
-    value: 12,
-  },
-  {
-    title: "Reports Generated",
-    value: 567,
-  },
-  {
-    title: "Running Jobs",
-    value: 5,
-  },
-];
 
 // Données des jobs récents
 const recentJobs = [
@@ -108,28 +97,67 @@ const recentReports = [
     created: "2025-08-23",
   },
 ];
+
+const { request: agentsRequest, doc: _agentsDoc, agents } = useAgents();
+const { request: jobsRequest, doc: _jobsDoc, jobs } = useJobs();
+const { request: reportsRequest, doc: _reportsDoc, reports } = useReports();
+
+const _agentsSkeleton = useSkeleton(agentsRequest.pending);
+const _jobsSkeleton = useSkeleton(jobsRequest.pending);
+const _reportsSkeleton = useSkeleton(reportsRequest.pending);
+
+const stats = computed<StatCard[]>(() => [
+  {
+    title: "Total Jobs",
+    value: jobs.value.length,
+    icon: ActivityIcon,
+  },
+  {
+    title: "Active Agents",
+    // TODO: Check if seen 20 mins ago
+    value: agents.value.map(({ last_seen_at }) => last_seen_at).filter(Boolean)
+      .length,
+    icon: ServerIcon,
+  },
+  {
+    title: "Reports Generated",
+    value: reports.value.length,
+    icon: FileChartColumnIcon,
+  },
+  {
+    title: "Running Jobs",
+    value: jobs.value.filter(({ status }) => status === "Running").length,
+    icon: TrendingUpIcon,
+  },
+]);
 </script>
 
 <template>
-  <div class="container mx-auto p-6">
-    <div class="mb-6">
-      <h1 class="text-3xl font-bold">Dashboard</h1>
-      <p class="text-muted-foreground">
-        Overview of jobs, runners, and reports
-      </p>
+  <div class="flex flex-col w-full gap-4 p-4">
+    <div class="flex flex-row w-full justify-between">
+      <div class="flex flex-col gap-1">
+        <h1 class="text-3xl leading-9 font-bold">Dashboard</h1>
+        <span class="text-base leading-6 font-normal text-muted-foreground">
+          Overview of jobs, runners, and reports
+        </span>
+      </div>
     </div>
 
-    <div>
-      <DashboardStats :stats="dashboardStats" />
-    </div>
+    <template v-if="_agentsSkeleton || _jobsSkeleton || _reportsSkeleton">
+      <div
+        class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4 py-[1px]"
+      >
+        <Skeleton v-for="i in 4" :key="i" class="h-[6.25rem] rounded-xl" />
+      </div>
+    </template>
 
-    <!-- Recent Jobs et Active Agents côte à côte -->
+    <DashboardStats v-else :stats />
+
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
       <DashboardRecentJobs :jobs="recentJobs" />
       <DashboardActiveAgents :agents="activeAgents" />
     </div>
 
-    <!-- Recent Reports en dessous -->
     <DashboardRecentReports :reports="recentReports" />
   </div>
 </template>
