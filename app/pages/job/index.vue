@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import JobDetails from "~/components/job/JobDetails.vue";
 import DownloadableArtifacts from "~/components/job/DownloadableArtifacts.vue";
+import JobAgentCard from "~/components/job/JobAgentCard.vue";
 
 definePageMeta({
   breadcrumb: "Job",
@@ -8,8 +9,10 @@ definePageMeta({
 });
 useHead({ title: "Job" });
 
-// mock job details
+// --- Mock data ---
 const job = {
+  title: "Nmap scanning for xyz",
+  id: "job-007",
   description: "Lorem Ipsum Dolor Sit Amet",
   duration: "1h 15m",
   started: "2025-08-22 13:45:00",
@@ -18,61 +21,59 @@ const job = {
   command: "-sS -sV --top-ports 1000 --open 192.168.1.0/24",
 };
 
-// mock artifacts
 const artifacts = [
-  { name: "nmap_scan.xml", type: "data", size: "45.2 MB", created: "2025-08-22 19:23:99" },
-  { name: "nmap_scan_logs.txt", type: "logs", size: "45.2 MB", created: "2025-08-22 19:23:99" },
-  { name: "something_really_long_to_truncat_just_in_….log", type: "logs", size: "45.2 MB", created: "2025-08-22 19:23:99" },
+  { name: "nmap_scan.xml", type: "data", size: "45.2 MB", created: "2025-08-22 19:23:99", href: "#" },
+  { name: "nmap_scan_logs.txt", type: "logs", size: "45.2 MB", created: "2025-08-22 19:23:99", href: "#" },
+  { name: "something_really_long_to_truncat_just_in_….log", type: "logs", size: "45.2 MB", created: "2025-08-22 19:23:99", href: "#" },
 ];
 
-// mock recent jobs
-const jobs = [
-  {
-    id: "123",
-    name: "Network Scan - Prod",
-    subtitle: "job-123",
-    status: "completed",
-    duration: "1h 15m",
-    startedAt: "2025-08-22 19:23:99",
-    href: "#",
-  },
-  {
-    id: "124",
-    name: "Network Scan - Staging",
-    subtitle: "job-124",
-    status: "running",
-    duration: "30m",
-    startedAt: "2025-08-22 20:10:00",
-    href: "#",
-  },
-  {
-    id: "125",
-    name: "Port Scan",
-    subtitle: "job-125",
-    status: "failed",
-    duration: "5m",
-    startedAt: "2025-08-22 18:40:00",
-    href: "#",
-  },
-];
+const agent = {
+  name: "James Bond",
+  id: "agent-007",
+  status: "Online" as const,
+  type: "Container",
+  ip: "10.0.0.7",
+};
 </script>
 
 <template>
   <div class="flex flex-col w-full gap-4 p-4">
-    <!-- Job details -->
-    <JobDetails
-      :description="job.description"
-      :duration="job.duration"
-      :started="job.started"
-      :completed="job.completed"
-      :tool-label="job.toolLabel"
-      :command="job.command"
-    />
+    <!-- Header simple (optionnel, garde si tu veux) -->
+    <div class="flex items-center justify-between">
+      <div>
+        <h1 class="text-3xl font-bold">{{ job.title }}</h1>
+        <span class="text-muted-foreground">Job ID: {{ job.id }}</span>
+      </div>
+    </div>
 
-    <!-- Downloadable artifacts -->
-    <DownloadableArtifacts :artifacts="artifacts" />
+    <!-- 2 colonnes comme sur le mockup -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 2xl:grid-cols-3 gap-4">
+      <!-- Colonne gauche -->
+      <div class="flex flex-col gap-4 2xl:col-span-2">
+        <JobDetails
+          :description="job.description"
+          :duration="job.duration"
+          :started="job.started"
+          :completed="job.completed"
+          :tool-label="job.toolLabel"
+          :command="job.command"
+        />
 
-    <!-- Recent jobs -->
-    <RecentJobs :jobs="jobs" />
+        <DownloadableArtifacts :artifacts="artifacts" />
+      </div>
+
+      <!-- Colonne droite -->
+      <div class="flex flex-col gap-4">
+        <JobAgentCard
+            :id="agent.id"
+            :name="agent.name"
+            :status="agent.status"
+            :type="agent.type"
+            :ip="agent.ip"
+        />
+
+        <!-- (Timeline viendra plus tard) -->
+      </div>
+    </div>
   </div>
 </template>
