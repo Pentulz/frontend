@@ -4,10 +4,13 @@ import DiscoveredHosts from "~/components/report/DiscoveredHosts.vue";
 import MergedArtifacts from "~/components/report/MergedArtifacts.vue";
 import VulnerabilitiesFound from "~/components/report/VulnerabilitiesFound.vue";
 
+import { Button } from "#components";
+import { FileDownIcon, FileCheck2Icon } from "lucide-vue-next";
+
 definePageMeta({ breadcrumb: "Report", title: "Report" });
 useHead({ title: "Report" });
 
-/* --------- Mocks --------- */
+// ----- MOCKS (frontend only) -----
 const report = {
   id: "report-1234",
   title: "Network Security Assessment",
@@ -20,8 +23,20 @@ const report = {
 };
 
 const hosts = [
-  { ip: "169 .256 .254 .265", hostname: "gateway.local", os: "Windows Server", openPorts: 5, services: ["SMB", "HTTPS", "SSH"] },
-  { ip: "10 .0 .0 .7", hostname: "bond.mi6.uk.gov", os: "Kali Linux", openPorts: 2, services: ["SSH", "HTTP"] },
+  {
+    ip: "169 .256 .254 .265",
+    hostname: "gateway.local",
+    os: "Windows Server",
+    openPorts: 5,
+    services: ["SMB", "HTTPS", "SSH"],
+  },
+  {
+    ip: "10 .0 .0 .7",
+    hostname: "bond.mi6.uk.gov",
+    os: "Kali Linux",
+    openPorts: 2,
+    services: ["SSH", "HTTP"],
+  },
 ];
 
 const artifacts = [
@@ -56,6 +71,12 @@ const vulns = [
     description: "SSL/TLS configuration allows weak cipher suites",
   },
 ];
+
+// mock handler
+const exportPdf = () => {
+  // TODO: brancher un export réel
+  console.log("Export PDF clicked");
+};
 </script>
 
 <template>
@@ -66,11 +87,25 @@ const vulns = [
         <h1 class="text-3xl font-bold">{{ report.title }}</h1>
         <span class="text-muted-foreground">Report ID: {{ report.id }}</span>
       </div>
+
+      <div class="flex items-center gap-2">
+        <!-- Pilule noire 'Completed' -->
+        <span class="inline-flex items-center gap-2 h-8 px-3 rounded-full bg-neutral-900 text-white text-xs">
+          <FileCheck2Icon class="w-4 h-4" />
+          Completed
+        </span>
+
+        <!-- Bouton Export PDF -->
+        <Button variant="outline" class="gap-2 h-8" @click="exportPdf">
+          <FileDownIcon class="w-4 h-4" />
+          Export PDF
+        </Button>
+      </div>
     </div>
 
-    <!-- Layout: left content + right vulnerabilities -->
+    <!-- Layout -->
     <div class="grid grid-cols-1 lg:grid-cols-2 2xl:grid-cols-3 gap-4">
-      <!-- LEFT (2/3) -->
+      <!-- Colonne gauche (2/3) -->
       <div class="flex flex-col gap-4 2xl:col-span-2">
         <ReportSummary
           :description="report.description"
@@ -79,11 +114,13 @@ const vulns = [
           :vulnerabilities="report.vulnerabilities"
           :generated-at="report.generatedAt"
         />
+
         <DiscoveredHosts :hosts="hosts" />
+
         <MergedArtifacts :artifacts="artifacts" />
       </div>
 
-      <!-- RIGHT (1/3) -->
+      <!-- Colonne droite (1/3) -->
       <div class="flex flex-col gap-4">
         <VulnerabilitiesFound :items="vulns" />
       </div>
