@@ -3,11 +3,11 @@ import { Card, CardHeader, CardTitle, CardContent, Badge } from "#components";
 import { DownloadIcon, FileTextIcon } from "lucide-vue-next";
 
 type Artifact = {
-  name: string;   // "nmap_scan.xml"
-  type: string;   // "data" | "logs" | ...
-  size: string;   // "45.2 MB"
-  created: string;// "2025-08-22 19:23:99"
-  href?: string;  // lien de téléchargement
+  name: string; // "nmap_scan.xml"
+  type: string; // "data" | "logs" | ...
+  size: string; // "45.2 MB"
+  created: string; // "2025-08-22 19:23:99"
+  href?: string; // lien de téléchargement
 };
 
 defineProps<{ artifacts: Artifact[] }>();
@@ -48,7 +48,9 @@ defineProps<{ artifacts: Artifact[] }>();
 
             <!-- Type -->
             <td class="px-4 py-3">
-              <Badge variant="secondary" class="text-[11px]">{{ a.type }}</Badge>
+              <Badge variant="secondary" class="text-[11px]">{{
+                a.type
+              }}</Badge>
             </td>
 
             <!-- Size -->

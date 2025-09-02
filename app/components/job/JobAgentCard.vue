@@ -1,16 +1,23 @@
 <script setup lang="ts">
-import { Card, CardHeader, CardTitle, CardContent, Separator } from "#components";
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardContent,
+  Separator,
+} from "#components";
 import { ServerIcon, ActivityIcon } from "lucide-vue-next";
 
 defineProps<{
   name: string;
   id: string;
   status: "Online" | "Offline";
-  type: string;   // ex: "Container"
-  ip: string;     // ex: "10.0.0.7"
+  type: string; // ex: "Container"
+  ip: string; // ex: "10.0.0.7"
 }>();
 
-const darkChip = "inline-flex items-center gap-2 rounded-full bg-neutral-900 text-white px-3 py-1 text-xs";
+const darkChip =
+  "inline-flex items-center gap-2 rounded-full bg-neutral-900 text-white px-3 py-1 text-xs";
 </script>
 
 <template>

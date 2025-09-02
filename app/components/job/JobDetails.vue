@@ -1,16 +1,22 @@
 <script setup lang="ts">
-import { Card, CardHeader, CardTitle, CardContent, Separator } from "#components";
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardContent,
+  Separator,
+} from "#components";
 import { CogIcon } from "lucide-vue-next";
 
 type Dateish = string | Date;
 
 const props = defineProps<{
   description?: string;
-  duration?: string;   // ex: "1h 15m"
-  started?: Dateish;   // "2025-08-22 13:45:00"
+  duration?: string; // ex: "1h 15m"
+  started?: Dateish; // "2025-08-22 13:45:00"
   completed?: Dateish; // "2025-08-22 15:00:00"
-  toolLabel?: string;  // ex: "nmap:"
-  command?: string;    // ex: "-sS -sV --top-ports 1000 --open 192.168.1.0/24"
+  toolLabel?: string; // ex: "nmap:"
+  command?: string; // ex: "-sS -sV --top-ports 1000 --open 192.168.1.0/24"
 }>();
 
 const fmt = (d?: Dateish) => {
@@ -62,7 +68,9 @@ const fmt = (d?: Dateish) => {
         <p class="text-sm font-medium text-neutral-500">Instructions</p>
 
         <div class="grid grid-cols-2 items-start">
-          <div class="text-sm text-neutral-500">{{ props.toolLabel || "nmap:" }}</div>
+          <div class="text-sm text-neutral-500">
+            {{ props.toolLabel || "nmap:" }}
+          </div>
           <div class="text-right">
             <span class="font-mono text-base">
               {{ props.command || "—" }}
