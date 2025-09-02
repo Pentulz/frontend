@@ -21,7 +21,7 @@ export type ClientError = FetchError<{
 }>;
 
 // JSON api typing
-type PlatformType = "WINDOWS" | "MACOS" | "LINUX";
+export type PlatformType = "WINDOWS" | "MACOS" | "LINUX";
 
 type ArgumentTypeMap = {
   string: string;

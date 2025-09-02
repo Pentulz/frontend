@@ -8,6 +8,8 @@ import {
   FileChartColumnIcon,
   TrendingUpIcon,
 } from "lucide-vue-next";
+import type { ActiveAgent } from "~/components/dashboard/DashboardActiveAgents.vue";
+import { interval, intervalToDuration } from "date-fns";
 
 definePageMeta({
   breadcrumb: "Dashboard",
@@ -17,34 +19,6 @@ definePageMeta({
 useHead({
   title: "Dashboard",
 });
-
-// Données des agents actifs
-const activeAgents = [
-  {
-    name: "James Bond",
-    status: "busy",
-    type: "Container",
-    ip: "10.0.0.7",
-    os: "Kali 24",
-    tools: 3,
-  },
-  {
-    name: "Workstation XYZ",
-    status: "idle",
-    type: "Workstation",
-    ip: "192.168.1.32",
-    os: "Ubuntu 24.04",
-    tools: 2,
-  },
-  {
-    name: "Johnny English",
-    status: "offline",
-    type: "Workstation",
-    ip: "169.254.254.254",
-    os: "Windows Server",
-    tools: 1,
-  },
-];
 
 // Données des rapports récents
 const recentReports = [
@@ -113,6 +87,28 @@ const recentJobs = computed<RecentJob[]>(() =>
     return {
       ...job,
       agent: agents.value.find(({ id }) => id === agent_id)?.name ?? "",
+    };
+  }),
+);
+
+const getAgentStatus = ({ last_seen_at, jobs }: Agent) => {
+  if (!last_seen_at) return "offline";
+
+  if (jobs.some((job) => job.started_at && !job.completed_at)) return "busy";
+
+  const duration = intervalToDuration(interval(last_seen_at, new Date()));
+
+  if (!duration.minutes) return "offline";
+
+  return duration.minutes < 20 ? "idle" : "offline";
+};
+
+const activeAgents = computed<ActiveAgent[]>(() =>
+  // TODO: Filter by latest
+  agents.value.slice(0, 3).map<ActiveAgent>((agent) => {
+    return {
+      ...agent,
+      status: getAgentStatus(agent),
     };
   }),
 );

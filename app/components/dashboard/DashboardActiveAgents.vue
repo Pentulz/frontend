@@ -7,23 +7,27 @@ import {
   Badge,
   Button,
 } from "#components";
+import {
+  ArrowRightIcon,
+  Grid2x2Icon,
+  ContainerIcon,
+  AppleIcon,
+} from "lucide-vue-next";
 
-export type Agent = {
-  name: string;
+import type { Agent } from "~/composables/use-api";
+
+export type ActiveAgent = Pick<
+  Agent,
+  "id" | "name" | "hostname" | "description" | "platform" | "available_tools"
+> & {
   status: "busy" | "idle" | "offline";
-  type: string;
-  ip: string;
-  os: string;
-  tools: number;
 };
 
 export type Props = {
-  agents?: Agent[];
+  agents?: ActiveAgent[];
 };
 
-const props = withDefaults(defineProps<Props>(), {
-  agents: () => [],
-});
+const { agents = [] } = defineProps<Props>();
 
 // Fonction pour obtenir la variante et le texte du badge selon le statut
 const getStatusInfo = (status: string) => {
@@ -54,6 +58,21 @@ const getStatusInfo = (status: string) => {
       };
   }
 };
+
+const platform = {
+  WINDOWS: {
+    text: "Windows",
+    icon: Grid2x2Icon,
+  },
+  MACOS: {
+    text: "MacOS",
+    icon: AppleIcon,
+  },
+  LINUX: {
+    text: "Linux",
+    icon: ContainerIcon,
+  },
+} as const;
 </script>
 
 <template>
@@ -65,8 +84,11 @@ const getStatusInfo = (status: string) => {
           variant="ghost"
           size="sm"
           class="text-sm text-muted-foreground hover:text-foreground"
+          as-child
         >
-          View All →
+          <NuxtLink to="/agents">
+            View All <ArrowRightIcon class="size-4" />
+          </NuxtLink>
         </Button>
       </div>
     </CardHeader>
@@ -74,8 +96,8 @@ const getStatusInfo = (status: string) => {
     <CardContent>
       <div class="space-y-4">
         <div
-          v-for="agent in props.agents"
-          :key="`${agent.name}-${agent.ip}`"
+          v-for="agent in agents"
+          :key="agent.id"
           class="flex items-center justify-between py-3 border-b border-border last:border-b-0"
         >
           <div class="flex-1">
@@ -90,17 +112,24 @@ const getStatusInfo = (status: string) => {
                     {{ getStatusInfo(agent.status).text }}
                   </Badge>
                 </div>
-                <div class="text-xs text-muted-foreground mt-1">
-                  {{ agent.type }}
-                </div>
-                <div class="text-xs text-muted-foreground mt-1">
-                  {{ agent.ip }} {{ agent.os }}
+                <div
+                  v-if="agent.platform && platform[agent.platform]"
+                  class="text-xs text-muted-foreground mt-1 flex items-center gap-2"
+                >
+                  <component
+                    :is="platform[agent.platform].icon"
+                    class="size-3"
+                  />
+
+                  {{ platform[agent.platform].text }}
                 </div>
               </div>
 
               <div class="text-right text-xs text-muted-foreground">
                 <div>
-                  {{ agent.tools }} tool{{ agent.tools !== 1 ? "s" : "" }}
+                  {{ agent.available_tools.length }} tool{{
+                    agent.available_tools.length !== 1 ? "s" : ""
+                  }}
                 </div>
               </div>
             </div>
