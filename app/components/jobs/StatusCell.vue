@@ -16,7 +16,7 @@ import {
 import { DateTimeCell } from "~/components/ui/data-table";
 import type { Component } from "vue";
 import type { BadgeVariants } from "~/components/ui/badge";
-import type { Job } from ".";
+import type { Job } from "~/composables/use-api";
 
 type Props = Pick<Job, "started_at" | "completed_at" | "status">;
 

@@ -141,7 +141,7 @@ type ResourceMap = {
   };
 };
 
-type RMKeys = keyof ResourceMap;
+export type RMKeys = keyof ResourceMap;
 
 type Ref<K extends RMKeys = RMKeys> = ResourceMap[K];
 
