@@ -1,6 +1,5 @@
 <script setup lang="ts">
-import type { JsonDocument, ClientError } from "~/lib/api";
-import { isSingleDocumentOf } from "~/lib/api";
+import MergedArtifacts from "~/components/report/MergedArtifacts.vue";
 
 definePageMeta({
   breadcrumb: `Report`,
@@ -8,36 +7,36 @@ definePageMeta({
 });
 
 const route = useRoute();
+
 const {
-  public: { apiBase },
-} = useRuntimeConfig();
+  request: { error, pending },
+  report,
+} = useReport(route.params.id as string);
 
-const { data, pending, error } = useFetch<JsonDocument, ClientError>(
-  `/api/v1/reports/${route.params.id}`,
-  {
-    baseURL: apiBase,
-    server: false,
-    lazy: false,
-  },
-);
-
-const doc = computed(() =>
-  data.value && isSingleDocumentOf(data.value, "reports")
-    ? data.value
-    : undefined,
-);
-
-const report = computed(() => {
-  if (!doc.value) return undefined;
-
-  return {
-    ...doc.value.data.attributes,
-    id: doc.value.data.id,
-  };
-});
+const {
+  request: { pending: jobsPending },
+  jobs,
+} = useJobs();
 
 useBackendError(error);
 const showSkeleton = useSkeleton(pending);
+const jobsSkeleton = useSkeleton(jobsPending);
+
+const artifacts = computed(() => {
+  if (!report.value?.results.metadata.jobs_ids) return [];
+
+  const job_ids = report.value.results.metadata.jobs_ids;
+
+  return jobs.value
+    .filter((job) => job_ids.includes(job.id) && job.results)
+    .map(({ id, results, name }) => {
+      return {
+        name,
+        id,
+        results: new Blob([results as string], { type: "text/plain" }),
+      };
+    });
+});
 </script>
 
 <template>
@@ -59,13 +58,14 @@ const showSkeleton = useSkeleton(pending);
     </div>
     <div class="flex flex-col lg:grid lg:grid-cols-2 2xl:grid-cols-3 gap-4">
       <div class="flex flex-col 2xl:col-span-2 gap-4">
-        <template v-if="showSkeleton">
+        <template v-if="showSkeleton || jobsSkeleton || !report">
           <Skeleton class="w-full h-[40dvh]" />
           <Skeleton class="w-full h-[30dvh]" />
         </template>
 
         <template v-else>
-          <div>Content</div>
+          <ReportSummary v-if="report" :report />
+          <MergedArtifacts :artifacts />
         </template>
       </div>
       <div class="flex flex-col gap-4">

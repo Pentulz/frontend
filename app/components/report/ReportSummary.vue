@@ -7,22 +7,18 @@ import {
   Separator,
 } from "#components";
 import { FileTextIcon } from "lucide-vue-next";
+import type { Report } from "~/composables/use-api";
 
-type Dateish = string | Date;
+export type ReportSummary = Pick<
+  Report,
+  "description" | "created_at" | "results"
+>;
 
-const props = defineProps<{
-  description?: string;
-  jobsMerged: number;
-  hostsDiscovered: number;
-  vulnerabilities: number;
-  generatedAt?: Dateish;
+const { report } = defineProps<{
+  report: ReportSummary;
 }>();
 
-const fmt = (d?: Dateish) => {
-  if (!d) return "—";
-  const dd = typeof d === "string" ? new Date(d) : d;
-  return isNaN(+dd) ? String(d) : dd.toLocaleString();
-};
+const vulnerabilitySeverities = ["low", "medium", "high", "critical"];
 </script>
 
 <template>
@@ -38,9 +34,9 @@ const fmt = (d?: Dateish) => {
     <CardContent class="flex flex-col gap-6">
       <!-- Description -->
       <div class="flex flex-col gap-2">
-        <p class="text-sm font-medium text-neutral-500">Description</p>
+        <p class="text-sm font-medium text-muted-foreground">Description</p>
         <p class="text-base leading-6">
-          {{ props.description || "—" }}
+          {{ report.description || "—" }}
         </p>
       </div>
 
@@ -50,7 +46,7 @@ const fmt = (d?: Dateish) => {
       <div class="grid grid-cols-3">
         <div class="flex flex-col items-center">
           <div class="text-3xl md:text-4xl font-semibold leading-tight">
-            {{ props.jobsMerged }}
+            {{ report.results.metadata.total_jobs }}
           </div>
           <div class="text-xs text-muted-foreground mt-1">Jobs Merged</div>
         </div>
@@ -58,15 +54,19 @@ const fmt = (d?: Dateish) => {
           <div
             class="text-3xl md:text-4xl font-semibold leading-tight text-blue-500"
           >
-            {{ props.hostsDiscovered }}
+            {{ report.results.metadata.total_findings }}
           </div>
-          <div class="text-xs text-muted-foreground mt-1">Hosts Discovered</div>
+          <div class="text-xs text-muted-foreground mt-1">Findings</div>
         </div>
         <div class="flex flex-col items-center">
           <div
             class="text-3xl md:text-4xl font-semibold leading-tight text-red-500"
           >
-            {{ props.vulnerabilities }}
+            {{
+              report.results.all_findings.filter(({ severity }) =>
+                vulnerabilitySeverities.includes(severity),
+              ).length
+            }}
           </div>
           <div class="text-xs text-muted-foreground mt-1">Vulnerabilities</div>
         </div>
@@ -77,7 +77,19 @@ const fmt = (d?: Dateish) => {
       <!-- Generated -->
       <div class="grid grid-cols-2 items-center">
         <div class="text-sm text-neutral-500">Generated:</div>
-        <div class="text-sm text-right">{{ fmt(props.generatedAt) }}</div>
+        <div class="text-sm text-right">
+          <NuxtTime
+            v-if="report.created_at"
+            :datetime="report.created_at"
+            day="2-digit"
+            month="2-digit"
+            year="numeric"
+            hour="2-digit"
+            minute="2-digit"
+            second="2-digit"
+            locale="fr-FR"
+          />
+        </div>
       </div>
     </CardContent>
   </Card>

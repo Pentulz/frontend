@@ -1,16 +1,31 @@
 <script setup lang="ts">
-import { Card, CardHeader, CardTitle, CardContent, Badge } from "#components";
-import { DownloadIcon, FileTextIcon } from "lucide-vue-next";
+import { Card, CardHeader, CardTitle, CardContent } from "#components";
+import { FileTextIcon } from "lucide-vue-next";
+import DownloadBlob from "./DownloadBlob.vue";
 
 type Artifact = {
-  name: string; // ex: "nmap_scan.xml"
-  type: string; // ex: "XML" | "PCAP" | "TXT"
-  size: string; // ex: "856 KB"
-  sourceJob: string; // ex: "job-007"
-  href?: string; // lien de téléchargement
+  name: string;
+  id: string;
+  results: Blob;
 };
 
 defineProps<{ artifacts: Artifact[] }>();
+
+const humanBytes = (bytes: number) => {
+  if (!Number.isFinite(bytes)) return "NaN";
+  const units = ["B", "KB", "MB", "GB"];
+  let val = Math.abs(bytes);
+  let i = 0;
+
+  while (val >= 1024 && i < units.length - 1) {
+    val /= 1024;
+    i++;
+  }
+
+  const dp = i === 0 ? 0 : 2; // no decimals for plain bytes
+  const num = i === 0 ? Math.round(val) : Number(val.toFixed(dp));
+  return `${num} ${units[i]}`;
+};
 </script>
 
 <template>
@@ -27,8 +42,7 @@ defineProps<{ artifacts: Artifact[] }>();
         <!-- Header -->
         <thead>
           <tr class="text-xs text-muted-foreground text-left">
-            <th class="px-4 py-2 font-medium">File Name</th>
-            <th class="px-4 py-2 font-medium">Type</th>
+            <th class="px-4 py-2 font-medium">Name</th>
             <th class="px-4 py-2 font-medium">Size</th>
             <th class="px-4 py-2 font-medium">Source Job</th>
             <th class="px-4 py-2 font-medium text-right">Action</th>
@@ -46,32 +60,19 @@ defineProps<{ artifacts: Artifact[] }>();
               </div>
             </td>
 
-            <!-- Type -->
-            <td class="px-4 py-3">
-              <Badge variant="secondary" class="text-[11px]">{{
-                a.type
-              }}</Badge>
-            </td>
-
             <!-- Size -->
             <td class="px-4 py-3">
-              {{ a.size }}
+              {{ humanBytes(a.results.size) }}
             </td>
 
             <!-- Source Job -->
             <td class="px-4 py-3">
-              <span class="font-mono">{{ a.sourceJob }}</span>
+              <span class="font-mono">{{ a.id }}</span>
             </td>
 
             <!-- Action -->
             <td class="px-4 py-3 text-right">
-              <a
-                :href="a.href || '#'"
-                class="inline-flex items-center justify-center w-7 h-7 border rounded-md"
-                aria-label="Download artifact"
-              >
-                <DownloadIcon class="w-4 h-4" />
-              </a>
+              <DownloadBlob :blob="a.results" :name="a.name" />
             </td>
           </tr>
         </tbody>

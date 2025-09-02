@@ -64,6 +64,16 @@ export type SystemToolCollectionDocument = {
   }>;
 };
 
+export type Finding = {
+  agent_id: string;
+  description: string;
+  id: string;
+  severity: "info" | "low" | "medium" | "high" | "critical";
+  target: string;
+  timestamp: string;
+  title: string;
+};
+
 export type ReportResult = {
   metadata: {
     name: string;
@@ -71,6 +81,7 @@ export type ReportResult = {
     created_at: string;
     total_jobs: number;
     total_findings: number;
+    jobs_ids: string[];
   };
 
   summary: {
@@ -89,12 +100,12 @@ export type ReportResult = {
     [key: string]: {
       tool_name: string;
       jobs_count: number;
-      finding: unknown[];
+      finding: Finding[];
       statistics: { [key: string]: unknown };
     };
   };
 
-  all_findings: unknown[];
+  all_findings: Finding[];
 };
 
 type ResourceMap = {
@@ -129,7 +140,7 @@ type ResourceMap = {
     started_at?: string;
     completed_at?: string;
     created_at?: string;
-    results: unknown;
+    results?: string;
     // Whether the job is successful (only if completed_at is set)
     success?: boolean;
   };
