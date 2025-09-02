@@ -25,9 +25,33 @@ const agent = {
 };
 
 const jobs = [
-  { id: "123", name: "Network Scan - Prod", subtitle: "job-123", status: "completed", duration: "1h 15m", startedAt: "2025-08-22 19:23:99", href: "/jobs/123" },
-  { id: "124", name: "Network Scan - Prod", subtitle: "job-123", status: "completed", duration: "1h 15m", startedAt: "2025-08-22 19:23:99", href: "/jobs/124" },
-  { id: "125", name: "Network Scan - Prod", subtitle: "job-123", status: "completed", duration: "1h 15m", startedAt: "2025-08-22 19:23:99", href: "/jobs/125" },
+  {
+    id: "123",
+    name: "Network Scan - Prod",
+    subtitle: "job-123",
+    status: "completed",
+    duration: "1h 15m",
+    startedAt: "2025-08-22 19:23:99",
+    href: "/jobs/123",
+  },
+  {
+    id: "124",
+    name: "Network Scan - Prod",
+    subtitle: "job-123",
+    status: "completed",
+    duration: "1h 15m",
+    startedAt: "2025-08-22 19:23:99",
+    href: "/jobs/124",
+  },
+  {
+    id: "125",
+    name: "Network Scan - Prod",
+    subtitle: "job-123",
+    status: "completed",
+    duration: "1h 15m",
+    startedAt: "2025-08-22 19:23:99",
+    href: "/jobs/125",
+  },
 ] as const;
 
 const capabilities = {
@@ -55,7 +79,9 @@ const capabilities = {
         <span class="text-muted-foreground">Agent ID: {{ agent.id }}</span>
       </div>
       <div class="hidden md:flex items-center gap-2">
-        <span class="inline-flex items-center gap-2 rounded-full border px-3 py-1 text-xs">
+        <span
+          class="inline-flex items-center gap-2 rounded-full border px-3 py-1 text-xs"
+        >
           <span class="w-2 h-2 rounded-full bg-emerald-500" /> Active
         </span>
         <button class="border rounded-md px-3 py-2 text-sm">New job</button>

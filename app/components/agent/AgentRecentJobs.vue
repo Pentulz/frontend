@@ -43,7 +43,9 @@ defineProps<{ jobs: Job[] }>();
             <!-- Job name -->
             <td class="px-4 py-3">
               <div class="font-medium">{{ j.name }}</div>
-              <div class="text-xs text-muted-foreground">{{ j.subtitle || `job-${j.id}` }}</div>
+              <div class="text-xs text-muted-foreground">
+                {{ j.subtitle || `job-${j.id}` }}
+              </div>
             </td>
 
             <!-- Status -->

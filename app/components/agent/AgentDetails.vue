@@ -1,7 +1,11 @@
 <script setup lang="ts">
 import {
-  Card, CardHeader, CardTitle, CardContent,
-  Separator, Badge,
+  Card,
+  CardHeader,
+  CardTitle,
+  CardContent,
+  Separator,
+  Badge,
 } from "#components";
 import { ServerIcon } from "lucide-vue-next";
 
@@ -65,7 +69,9 @@ const lastSeenStr = computed(() => {
 
         <!-- Colonne droite -->
         <div class="flex flex-col gap-3">
-          <p class="text-sm font-medium text-neutral-500">Network &amp; Status</p>
+          <p class="text-sm font-medium text-neutral-500">
+            Network &amp; Status
+          </p>
 
           <div class="flex items-center justify-between">
             <span class="text-sm text-neutral-500">IP Address:</span>
@@ -87,12 +93,14 @@ const lastSeenStr = computed(() => {
       <Separator />
 
       <!-- Tags -->
-        <div class="flex items-center justify-between">
-            <span class="text-sm text-neutral-500">Tags</span>
-        </div>
-        <div v-if="props.tags?.length" class="flex flex-wrap gap-2 pt-2">
-            <Badge v-for="t in props.tags" :key="t" variant="secondary">{{ t }}</Badge>
-        </div>
+      <div class="flex items-center justify-between">
+        <span class="text-sm text-neutral-500">Tags</span>
+      </div>
+      <div v-if="props.tags?.length" class="flex flex-wrap gap-2 pt-2">
+        <Badge v-for="t in props.tags" :key="t" variant="secondary">{{
+          t
+        }}</Badge>
+      </div>
     </CardContent>
   </Card>
 </template>

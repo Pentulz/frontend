@@ -33,11 +33,16 @@ defineProps<{
               <!-- état -->
               <span
                 class="inline-flex items-center justify-center w-6 h-6 rounded-full border"
-                :class="t.ok === false
-                  ? 'border-rose-200 text-rose-600 bg-white'
-                  : 'border-emerald-200 text-emerald-600 bg-white'"
+                :class="
+                  t.ok === false
+                    ? 'border-rose-200 text-rose-600 bg-white'
+                    : 'border-emerald-200 text-emerald-600 bg-white'
+                "
               >
-                <component :is="t.ok === false ? XIcon : CheckIcon" class="w-4 h-4" />
+                <component
+                  :is="t.ok === false ? XIcon : CheckIcon"
+                  class="w-4 h-4"
+                />
               </span>
               <span class="text-sm">{{ t.name }}</span>
             </div>
@@ -65,11 +70,16 @@ defineProps<{
             <div class="flex items-center gap-3">
               <span
                 class="inline-flex items-center justify-center w-6 h-6 rounded-full border"
-                :class="s.ok === false
-                  ? 'border-rose-200 text-rose-600 bg-white'
-                  : 'border-emerald-200 text-emerald-600 bg-white'"
+                :class="
+                  s.ok === false
+                    ? 'border-rose-200 text-rose-600 bg-white'
+                    : 'border-emerald-200 text-emerald-600 bg-white'
+                "
               >
-                <component :is="s.ok === false ? XIcon : CheckIcon" class="w-4 h-4" />
+                <component
+                  :is="s.ok === false ? XIcon : CheckIcon"
+                  class="w-4 h-4"
+                />
               </span>
               <span class="text-sm">{{ s.name }}</span>
             </div>

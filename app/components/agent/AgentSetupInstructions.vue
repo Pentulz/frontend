@@ -1,10 +1,5 @@
 <script setup lang="ts">
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from "#components";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "#components";
 import { TerminalIcon, ClipboardIcon } from "lucide-vue-next";
 
 const props = defineProps<{
@@ -21,12 +16,12 @@ function copy(text: string) {
 // 🟢 Préparation des commandes
 const dockerCmd = computed(
   () =>
-    `docker run --rm ghcr.io/pentulz/agent:latest -e KEY="${props.agentKey}" -e BACKEND_URL="${props.backendUrl}"`
+    `docker run --rm ghcr.io/pentulz/agent:latest -e KEY="${props.agentKey}" -e BACKEND_URL="${props.backendUrl}"`,
 );
 
 const cliCmd = computed(
   () =>
-    `pentulz_agent --key "${props.agentKey}" --backend "${props.backendUrl}"`
+    `pentulz_agent --key "${props.agentKey}" --backend "${props.backendUrl}"`,
 );
 </script>
 
@@ -49,7 +44,8 @@ const cliCmd = computed(
           >
             <code>{{ dockerCmd }}</code>
             <button
-            class="absolute top-2 right-2 text-neutral-400 hover:text-white" @click="copy(dockerCmd)"
+              class="absolute top-2 right-2 text-neutral-400 hover:text-white"
+              @click="copy(dockerCmd)"
             >
               <ClipboardIcon class="w-4 h-4" />
             </button>
@@ -67,7 +63,8 @@ const cliCmd = computed(
           >
             <code>{{ cliCmd }}</code>
             <button
-            class="absolute top-2 right-2 text-neutral-400 hover:text-white" @click="copy(cliCmd)"
+              class="absolute top-2 right-2 text-neutral-400 hover:text-white"
+              @click="copy(cliCmd)"
             >
               <ClipboardIcon class="w-4 h-4" />
             </button>
