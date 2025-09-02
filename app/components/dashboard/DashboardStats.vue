@@ -11,7 +11,7 @@ export type Props = {
 };
 
 const props = withDefaults(defineProps<Props>(), {
-  stats: () => []
+  stats: () => [],
 });
 </script>
 

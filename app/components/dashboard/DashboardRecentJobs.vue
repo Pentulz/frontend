@@ -11,7 +11,7 @@ import {
 export type Job = {
   name: string;
   agent: string;
-  status: 'completed' | 'running' | 'failed';
+  status: "completed" | "running" | "failed";
   duration: string;
   timestamp: string;
 };
@@ -21,34 +21,50 @@ export type Props = {
 };
 
 const props = withDefaults(defineProps<Props>(), {
-  jobs: () => []
+  jobs: () => [],
 });
 
 // Fonction pour obtenir la variante et le texte du badge selon le statut
 const getStatusInfo = (status: string) => {
   switch (status) {
-    case 'completed':
-      return { variant: 'default', text: 'completed', bgColor: 'bg-green-100 text-green-800' };
-    case 'running':
-      return { variant: 'secondary', text: 'running', bgColor: 'bg-blue-100 text-blue-800' };
-    case 'failed':
-      return { variant: 'destructive', text: 'failed', bgColor: 'bg-red-100 text-red-800' };
+    case "completed":
+      return {
+        variant: "default",
+        text: "completed",
+        bgColor: "bg-green-100 text-green-800",
+      };
+    case "running":
+      return {
+        variant: "secondary",
+        text: "running",
+        bgColor: "bg-blue-100 text-blue-800",
+      };
+    case "failed":
+      return {
+        variant: "destructive",
+        text: "failed",
+        bgColor: "bg-red-100 text-red-800",
+      };
     default:
-      return { variant: 'outline', text: status, bgColor: 'bg-gray-100 text-gray-800' };
+      return {
+        variant: "outline",
+        text: status,
+        bgColor: "bg-gray-100 text-gray-800",
+      };
   }
 };
 
 // Fonction pour obtenir le préfixe du timestamp
 const getTimestampPrefix = (status: string) => {
   switch (status) {
-    case 'completed':
-      return 'Completed:';
-    case 'running':
-      return 'Started:';
-    case 'failed':
-      return 'Failed:';
+    case "completed":
+      return "Completed:";
+    case "running":
+      return "Started:";
+    case "failed":
+      return "Failed:";
     default:
-      return 'Updated:';
+      return "Updated:";
   }
 };
 </script>
@@ -58,16 +74,20 @@ const getTimestampPrefix = (status: string) => {
     <CardHeader>
       <div class="flex items-center justify-between">
         <CardTitle class="text-base font-semibold">Recent Jobs</CardTitle>
-        <Button variant="ghost" size="sm" class="text-sm text-muted-foreground hover:text-foreground">
+        <Button
+          variant="ghost"
+          size="sm"
+          class="text-sm text-muted-foreground hover:text-foreground"
+        >
           View All →
         </Button>
       </div>
     </CardHeader>
-    
+
     <CardContent>
       <div class="space-y-4">
-        <div 
-          v-for="job in props.jobs" 
+        <div
+          v-for="job in props.jobs"
           :key="`${job.name}-${job.agent}`"
           class="flex items-center justify-between py-3 border-b border-border last:border-b-0"
         >
@@ -82,17 +102,19 @@ const getTimestampPrefix = (status: string) => {
                   Duration: {{ job.duration }}
                 </div>
               </div>
-              
+
               <div class="flex items-center gap-3">
-                <Badge 
+                <Badge
                   :class="getStatusInfo(job.status).bgColor"
                   class="text-xs px-2 py-1 rounded"
                 >
                   {{ getStatusInfo(job.status).text }}
                 </Badge>
-                
+
                 <div class="text-right text-xs text-muted-foreground">
-                  <div>{{ getTimestampPrefix(job.status) }} {{ job.timestamp }}</div>
+                  <div>
+                    {{ getTimestampPrefix(job.status) }} {{ job.timestamp }}
+                  </div>
                 </div>
               </div>
             </div>
