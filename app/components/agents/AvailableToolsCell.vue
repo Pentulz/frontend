@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { Badge } from "#components";
-import type { Agent } from ".";
+import type { Agent } from "~/composables/use-api";
 
 type Tool = Agent["available_tools"][0];
 

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { Badge } from "#components";
 
-import type { Job } from ".";
+import type { Job } from "~/composables/use-api";
 
 type Props = {
   action: Job["action"];
@@ -12,12 +12,12 @@ const { action } = defineProps<Props>();
 
 <template>
   <div class="flex flex-row gap-2">
-    <Badge :key="action.name" variant="outline">
+    <Badge :key="action.cmd" variant="outline">
       <template v-if="action.cmd">
         {{ action.cmd }}
       </template>
       <template v-else>
-        {{ action.name }}
+        {{ action.cmd }}
       </template>
       <template v-if="action.args">
         <template v-if="Array.isArray(action.args)">

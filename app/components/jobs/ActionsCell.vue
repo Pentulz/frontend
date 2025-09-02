@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { Row } from "@tanstack/vue-table";
-import type { Job } from ".";
+import type { Job } from "~/composables/use-api";
 import { Eye } from "lucide-vue-next";
 
 type Props = {
