@@ -40,9 +40,27 @@ const hosts = [
 ];
 
 const artifacts = [
-  { name: "nmap_scan.xml", type: "XML", size: "856 KB", sourceJob: "job-007", href: "#" },
-  { name: "traffic_analysis.pcap", type: "PCAP", size: "45.2 MB", sourceJob: "job-077", href: "#" },
-  { name: "something_really_long_to_truncat_just_in_….txt", type: "TXT", size: "4 KB", sourceJob: "job-420", href: "#" },
+  {
+    name: "nmap_scan.xml",
+    type: "XML",
+    size: "856 KB",
+    sourceJob: "job-007",
+    href: "#",
+  },
+  {
+    name: "traffic_analysis.pcap",
+    type: "PCAP",
+    size: "45.2 MB",
+    sourceJob: "job-077",
+    href: "#",
+  },
+  {
+    name: "something_really_long_to_truncat_just_in_….txt",
+    type: "TXT",
+    size: "4 KB",
+    sourceJob: "job-420",
+    href: "#",
+  },
 ];
 
 const vulns = [
@@ -60,7 +78,8 @@ const vulns = [
     cve: "CVE-2023-5678",
     host: "10.0.0.7",
     service: "SSH",
-    description: "SSH server running outdated version with known vulnerabilities",
+    description:
+      "SSH server running outdated version with known vulnerabilities",
   },
   {
     title: "Weak SSL Configuration",
@@ -90,7 +109,9 @@ const exportPdf = () => {
 
       <div class="flex items-center gap-2">
         <!-- Pilule noire 'Completed' -->
-        <span class="inline-flex items-center gap-2 h-8 px-3 rounded-full bg-neutral-900 text-white text-xs">
+        <span
+          class="inline-flex items-center gap-2 h-8 px-3 rounded-full bg-neutral-900 text-white text-xs"
+        >
           <FileCheck2Icon class="w-4 h-4" />
           Completed
         </span>

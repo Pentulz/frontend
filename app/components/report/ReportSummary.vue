@@ -1,5 +1,11 @@
 <script setup lang="ts">
-import { Card, CardHeader, CardTitle, CardContent, Separator } from "#components";
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardContent,
+  Separator,
+} from "#components";
 import { FileTextIcon } from "lucide-vue-next";
 
 type Dateish = string | Date;
@@ -43,17 +49,23 @@ const fmt = (d?: Dateish) => {
       <!-- KPI row -->
       <div class="grid grid-cols-3">
         <div class="flex flex-col items-center">
-          <div class="text-3xl md:text-4xl font-semibold leading-tight">{{ props.jobsMerged }}</div>
+          <div class="text-3xl md:text-4xl font-semibold leading-tight">
+            {{ props.jobsMerged }}
+          </div>
           <div class="text-xs text-muted-foreground mt-1">Jobs Merged</div>
         </div>
         <div class="flex flex-col items-center">
-          <div class="text-3xl md:text-4xl font-semibold leading-tight text-blue-500">
+          <div
+            class="text-3xl md:text-4xl font-semibold leading-tight text-blue-500"
+          >
             {{ props.hostsDiscovered }}
           </div>
           <div class="text-xs text-muted-foreground mt-1">Hosts Discovered</div>
         </div>
         <div class="flex flex-col items-center">
-          <div class="text-3xl md:text-4xl font-semibold leading-tight text-red-500">
+          <div
+            class="text-3xl md:text-4xl font-semibold leading-tight text-red-500"
+          >
             {{ props.vulnerabilities }}
           </div>
           <div class="text-xs text-muted-foreground mt-1">Vulnerabilities</div>
