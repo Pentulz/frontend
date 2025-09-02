@@ -13,7 +13,7 @@ import {
   type ClientError,
   isCollectionDocumentOf,
 } from "~/lib/api";
-import { type Job, getStatus } from ".";
+import { type Job, getStatus } from "~/composables/use-api";
 
 const {
   public: { apiBase },

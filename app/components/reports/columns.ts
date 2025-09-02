@@ -1,5 +1,5 @@
 import { h } from "vue";
-import type { Report } from ".";
+import type { Report } from "~/composables/use-api";
 import type { ColumnDef } from "@tanstack/vue-table";
 import { SortableHeader, DateTimeCell } from "~/components/ui/data-table";
 import ActionsCell from "./ActionsCell.vue";
