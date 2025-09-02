@@ -30,7 +30,7 @@ import {
 } from "~/components/ui/select";
 import { Textarea } from "~/components/ui/textarea";
 import { Input } from "~/components/ui/input";
-import { type Job, getStatus } from "../jobs";
+import { type Job, getStatus } from "~/composables/use-api";
 import { PlusIcon, FileChartColumnIcon } from "lucide-vue-next";
 import { toTypedSchema } from "@vee-validate/zod";
 import * as z from "zod";

@@ -1,5 +1,5 @@
 import { h } from "vue";
-import type { Agent } from ".";
+import type { Agent } from "~/composables/use-api";
 import type { ColumnDef } from "@tanstack/vue-table";
 import Header from "../ui/data-table/SortableHeader.vue";
 import AvailableToolsCell from "./AvailableToolsCell.vue";

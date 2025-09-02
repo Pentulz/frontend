@@ -21,7 +21,7 @@ export type ClientError = FetchError<{
 }>;
 
 // JSON api typing
-type PlatformType = "WINDOWS" | "MACOS" | "LINUX";
+export type PlatformType = "WINDOWS" | "MACOS" | "LINUX";
 
 type ArgumentTypeMap = {
   string: string;
@@ -141,7 +141,7 @@ type ResourceMap = {
   };
 };
 
-type RMKeys = keyof ResourceMap;
+export type RMKeys = keyof ResourceMap;
 
 type Ref<K extends RMKeys = RMKeys> = ResourceMap[K];
 

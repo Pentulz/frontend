@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { Report } from ".";
+import type { Report } from "~/composables/use-api";
 import {
   DataTableProvider,
   DataTable,

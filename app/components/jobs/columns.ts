@@ -1,5 +1,5 @@
 import { h } from "vue";
-import type { Job } from ".";
+import type { Job } from "~/composables/use-api";
 import type { ColumnDef } from "@tanstack/vue-table";
 import ActionCell from "./ActionCell.vue";
 import ActionsCell from "./ActionsCell.vue";

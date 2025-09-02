@@ -11,7 +11,7 @@ import {
 import { Label, Button } from "#components";
 import { Card, CardHeader, CardTitle, CardContent } from "~/components/ui/card";
 import { FilterIcon, SearchIcon, RotateCcwIcon } from "lucide-vue-next";
-import type { Job } from ".";
+import type { Job } from "~/composables/use-api";
 
 const { table } = useDataTable<Job, unknown>();
 
