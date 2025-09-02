@@ -148,3 +148,30 @@ export const useJobs = () => {
 
   return { request, doc, jobs };
 };
+
+export const useJob = (id: string) => {
+  const { request, doc } = useSingleDocumentOf(`/api/v1/jobs/${id}`, "jobs");
+
+  const job = computed(() => {
+    if (!doc.value) return undefined;
+
+    const {
+      id,
+      attributes: { created_at, started_at, completed_at, ...rest },
+    } = doc.value.data;
+
+    const startedAt = started_at ? new Date(started_at) : undefined;
+    const completedAt = completed_at ? new Date(completed_at) : undefined;
+
+    return {
+      ...rest,
+      id,
+      created_at: created_at ? new Date(created_at) : undefined,
+      started_at: startedAt,
+      completed_at: completedAt,
+      status: getStatus(startedAt, completedAt),
+    } as Job;
+  });
+
+  return { request, doc, job };
+};
