@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import type { JsonDocument, ClientError } from "~/lib/api";
 import { Skeleton } from "~/components/ui/skeleton";
-import { isSingleDocumentOf } from "~/lib/api";
+import type { Job } from "~/composables/use-api";
+import type { AgentDetails } from "~/components/agent/AgentDetails.vue";
 
 definePageMeta({
   breadcrumb: `Agent`,
@@ -9,32 +9,34 @@ definePageMeta({
 });
 
 const route = useRoute();
+
 const {
-  public: { apiBase },
-} = useRuntimeConfig();
+  request: { error, pending },
+  agent,
+} = useAgent(route.params.id as string);
 
-const { data, pending, error } = useFetch<JsonDocument, ClientError>(
-  `/api/v1/agents/${route.params.id}`,
-  {
-    baseURL: apiBase,
-    server: false,
-    lazy: false,
-  },
-);
+const agentDetails = computed<AgentDetails>(() => {
+  return agent.value as AgentDetails;
+});
 
-const doc = computed(() =>
-  data.value && isSingleDocumentOf(data.value, "agents")
-    ? data.value
-    : undefined,
-);
+const recentJobs = computed<Job[]>(() => {
+  if (!agent.value) return [];
 
-const agent = computed(() => {
-  if (!doc.value) return undefined;
+  return agent.value.jobs
+    .slice(0, 5)
+    .map<Job>(({ id, created_at, completed_at, started_at, ...rest }) => {
+      const startedAt = started_at ? new Date(started_at) : undefined;
+      const completedAt = completed_at ? new Date(completed_at) : undefined;
 
-  return {
-    id: doc.value.data.id,
-    ...doc.value.data.attributes,
-  };
+      return {
+        ...rest,
+        id,
+        created_at: created_at ? new Date(created_at) : undefined,
+        completed_at: completedAt,
+        started_at: startedAt,
+        status: getStatus(startedAt, completedAt),
+      };
+    });
 });
 
 useBackendError(error);
@@ -66,7 +68,8 @@ const showSkeleton = useSkeleton(pending);
         </template>
 
         <template v-else>
-          <div>Content</div>
+          <AgentDetails :agent="agentDetails" />
+          <AgentRecentJobs :jobs="recentJobs" />
         </template>
       </div>
       <div class="flex flex-col gap-4">

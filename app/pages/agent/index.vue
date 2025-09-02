@@ -92,16 +92,6 @@ const capabilities = {
     <div class="grid grid-cols-1 lg:grid-cols-2 2xl:grid-cols-3 gap-4">
       <!-- Colonne principale -->
       <div class="flex flex-col gap-4 2xl:col-span-2">
-        <AgentDetails
-          :description="agent.description"
-          :type="agent.type"
-          :os="agent.os"
-          :ip="agent.ip"
-          :uptime="agent.uptime"
-          :last-seen="agent.lastSeen"
-          :tags="agent.tags"
-        />
-
         <AgentRecentJobs :jobs="jobs" />
       </div>
 

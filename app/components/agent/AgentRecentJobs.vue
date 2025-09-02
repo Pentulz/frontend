@@ -1,18 +1,18 @@
 <script setup lang="ts">
 import { Card, CardHeader, CardTitle, CardContent, Badge } from "#components";
 import { ClockIcon, CheckCircle2Icon, ExternalLinkIcon } from "lucide-vue-next";
+import type { Job } from "~/composables/use-api";
+import { formatDistance, formatDistanceToNow } from "date-fns";
 
-export type Job = {
-  id: string;
-  name: string;
-  subtitle?: string; // ex: job-123
-  status: "completed" | "running" | "failed" | "queued";
-  duration: string;
-  startedAt: string;
-  href?: string;
+const { jobs } = defineProps<{ jobs: Job[] }>();
+
+const duration = ({ started_at, completed_at }: Job) => {
+  if (!started_at) return undefined;
+
+  return completed_at
+    ? formatDistance(completed_at, started_at)
+    : formatDistanceToNow(started_at);
 };
-
-defineProps<{ jobs: Job[] }>();
 </script>
 
 <template>
@@ -30,7 +30,7 @@ defineProps<{ jobs: Job[] }>();
         <thead>
           <tr class="text-xs text-muted-foreground text-left">
             <th class="px-4 py-2 font-medium">Job Name</th>
-            <th class="px-4 py-2 font-medium text-center">Status</th>
+            <th class="px-4 py-2 font-medium">Status</th>
             <th class="px-4 py-2 font-medium text-right">Duration</th>
             <th class="px-4 py-2 font-medium text-right">Started</th>
             <th class="px-4 py-2 font-medium text-right">Actions</th>
@@ -39,41 +39,52 @@ defineProps<{ jobs: Job[] }>();
 
         <!-- Body -->
         <tbody class="divide-y">
-          <tr v-for="j in jobs" :key="j.id" class="hover:bg-muted/30">
+          <tr v-for="job in jobs" :key="job.id" class="hover:bg-muted/30">
             <!-- Job name -->
             <td class="px-4 py-3">
-              <div class="font-medium">{{ j.name }}</div>
+              <div class="font-medium">{{ job.name }}</div>
               <div class="text-xs text-muted-foreground">
-                {{ j.subtitle || `job-${j.id}` }}
+                {{ job.id }}
               </div>
             </td>
 
             <!-- Status -->
-            <td class="px-4 py-3 text-center">
+            <td class="px-4 py-3">
               <Badge
                 variant="outline"
                 class="h-6 px-2 text-xs rounded-full inline-flex items-center gap-1"
               >
                 <CheckCircle2Icon class="w-3 h-3" />
-                <span class="capitalize">{{ j.status }}</span>
+                <span class="capitalize">{{ job.status }}</span>
               </Badge>
             </td>
 
             <!-- Duration -->
-            <td class="px-4 py-3 text-right">{{ j.duration }}</td>
+            <td class="px-4 py-3 text-right">{{ duration(job) }}</td>
 
             <!-- Started -->
-            <td class="px-4 py-3 text-right">{{ j.startedAt }}</td>
+            <td class="px-4 py-3 text-right">
+              <NuxtTime
+                v-if="job.started_at"
+                :datetime="job.started_at"
+                day="2-digit"
+                month="2-digit"
+                year="numeric"
+                hour="2-digit"
+                minute="2-digit"
+                second="2-digit"
+                locale="fr-FR"
+              />
+              <template v-else> - </template>
+            </td>
 
             <!-- Actions -->
             <td class="px-4 py-3 text-right">
-              <a
-                :href="j.href || '#'"
-                class="inline-flex items-center justify-center w-7 h-7 border rounded-md"
-                aria-label="Open job"
-              >
-                <ExternalLinkIcon class="w-4 h-4" />
-              </a>
+              <Button size="icon" variant="outline" as-child>
+                <NuxtLink :to="`/jobs/${job.id}`">
+                  <ExternalLinkIcon class="size-4" />
+                </NuxtLink>
+              </Button>
             </td>
           </tr>
         </tbody>
