@@ -2,11 +2,12 @@
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "#components";
 import { TerminalIcon, ClipboardIcon } from "lucide-vue-next";
 
+const config = useRuntimeConfig();
+
 const props = defineProps<{
   open: boolean;
   onClose: () => void;
   agentKey: string;
-  backendUrl: string;
 }>();
 
 function copy(text: string) {
@@ -16,12 +17,12 @@ function copy(text: string) {
 // 🟢 Préparation des commandes
 const dockerCmd = computed(
   () =>
-    `docker run --rm ghcr.io/pentulz/agent:latest -e KEY="${props.agentKey}" -e BACKEND_URL="${props.backendUrl}"`,
+    `docker run --rm ghcr.io/pentulz/agent:latest -e KEY="${props.agentKey}" -e BACKEND_URL="${config.public.apiBase}"`,
 );
 
 const cliCmd = computed(
   () =>
-    `pentulz_agent --key "${props.agentKey}" --backend "${props.backendUrl}"`,
+    `pentulz_agent --key "${props.agentKey}" --backend "${config.public.apiBase}"`,
 );
 </script>
 
@@ -55,8 +56,10 @@ const cliCmd = computed(
         <!-- Option 2 -->
         <div class="flex flex-col gap-2">
           <p class="font-medium">Option 2: CLI Setup</p>
-          <button class="border rounded-md px-3 py-2 text-sm w-fit">
-            Download from GitHub Releases
+          <button class="border rounded-md px-3 py-2 text-sm w-fit" as-child>
+            <NuxtLink to="https://github.com/Pentulz/frontend/releases">
+              Download from GitHub Releases
+            </NuxtLink>
           </button>
           <div
             class="relative bg-neutral-900 text-green-400 rounded-md p-3 font-mono text-sm"

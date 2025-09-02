@@ -3,11 +3,13 @@ import { Card, CardHeader, CardTitle, CardContent, Button } from "#components";
 import { PlayIcon, SettingsIcon, BookmarkIcon } from "lucide-vue-next";
 import AgentSetupInstructions from "~/components/agent/AgentSetupInstructions.vue";
 
-const showSetup = ref(false);
+type Props = {
+  agentKey: string;
+};
 
-// mocks
-const agentKey = "i2fcbogcbc4eu618ycac3";
-const backendUrl = "https://pentulz.xyz/";
+const { agentKey } = defineProps<Props>();
+
+const showSetup = ref(false);
 </script>
 
 <template>
@@ -41,6 +43,5 @@ const backendUrl = "https://pentulz.xyz/";
     :open="showSetup"
     :on-close="() => (showSetup = false)"
     :agent-key="agentKey"
-    :backend-url="backendUrl"
   />
 </template>
