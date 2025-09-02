@@ -7,53 +7,21 @@ import {
   Badge,
   Button,
 } from "#components";
+import { ArrowRightIcon } from "lucide-vue-next";
 
-export type Report = {
-  name: string;
-  status: "completed" | "processing" | "failed";
-  hostsFound: number;
+import type { Report } from "~/composables/use-api";
+
+export type RecentReport = Pick<Report, "name" | "id"> & {
   vulnerabilities: number;
-  severity: "high" | "medium" | "low";
+  severity: "critical" | "high" | "medium" | "low" | "info";
   created: string;
 };
 
 export type Props = {
-  reports?: Report[];
+  reports?: RecentReport[];
 };
 
-const props = withDefaults(defineProps<Props>(), {
-  reports: () => [],
-});
-
-// Fonction pour obtenir la variante et le texte du badge selon le statut
-const getStatusInfo = (status: string) => {
-  switch (status) {
-    case "completed":
-      return {
-        variant: "default",
-        text: "completed",
-        bgColor: "bg-green-100 text-green-800",
-      };
-    case "processing":
-      return {
-        variant: "secondary",
-        text: "processing",
-        bgColor: "bg-blue-100 text-blue-800",
-      };
-    case "failed":
-      return {
-        variant: "destructive",
-        text: "failed",
-        bgColor: "bg-red-100 text-red-800",
-      };
-    default:
-      return {
-        variant: "outline",
-        text: status,
-        bgColor: "bg-gray-100 text-gray-800",
-      };
-  }
-};
+const { reports = [] } = defineProps<Props>();
 
 // Fonction pour obtenir la couleur du badge de sévérité
 const getSeverityInfo = (severity: string) => {
@@ -79,8 +47,11 @@ const getSeverityInfo = (severity: string) => {
           variant="ghost"
           size="sm"
           class="text-sm text-muted-foreground hover:text-foreground"
+          as-child
         >
-          View All →
+          <NuxtLink to="/reports">
+            View All <ArrowRightIcon class="size-4" />
+          </NuxtLink>
         </Button>
       </div>
     </CardHeader>
@@ -88,26 +59,15 @@ const getSeverityInfo = (severity: string) => {
     <CardContent>
       <!-- Layout en colonnes comme dans l'image -->
       <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <div
-          v-for="report in props.reports"
-          :key="`${report.name}-${report.created}`"
+        <NuxtLink
+          v-for="report in reports"
+          :key="report.id"
+          :to="`/reports/${report.id}`"
           class="p-4 border border-border rounded-lg space-y-3"
         >
           <!-- Titre avec badge statut -->
           <div>
             <div class="font-medium text-sm mb-2">{{ report.name }}</div>
-            <Badge
-              :class="getStatusInfo(report.status).bgColor"
-              class="text-xs px-2 py-1 rounded"
-            >
-              {{ getStatusInfo(report.status).text }}
-            </Badge>
-          </div>
-
-          <!-- Hosts Found -->
-          <div class="flex justify-between items-center">
-            <span class="text-sm text-muted-foreground">Hosts Found:</span>
-            <span class="text-sm font-medium">{{ report.hostsFound }}</span>
           </div>
 
           <!-- Vulnerabilities avec badge sévérité -->
@@ -132,7 +92,7 @@ const getSeverityInfo = (severity: string) => {
           >
             Created {{ report.created }}
           </div>
-        </div>
+        </NuxtLink>
       </div>
     </CardContent>
   </Card>

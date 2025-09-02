@@ -1,5 +1,10 @@
 <script setup lang="ts">
-import { useAgents, useJobs, useReports } from "~/composables/use-api";
+import {
+  useAgents,
+  useJobs,
+  useReports,
+  type Report,
+} from "~/composables/use-api";
 import type { StatCard } from "~/components/dashboard/DashboardStats.vue";
 import type { RecentJob } from "~/components/dashboard/DashboardRecentJobs.vue";
 import {
@@ -9,7 +14,8 @@ import {
   TrendingUpIcon,
 } from "lucide-vue-next";
 import type { ActiveAgent } from "~/components/dashboard/DashboardActiveAgents.vue";
-import { interval, intervalToDuration } from "date-fns";
+import { interval, intervalToDuration, formatDistanceToNow } from "date-fns";
+import type { RecentReport } from "~/components/dashboard/DashboardRecentReports.vue";
 
 definePageMeta({
   breadcrumb: "Dashboard",
@@ -19,34 +25,6 @@ definePageMeta({
 useHead({
   title: "Dashboard",
 });
-
-// Données des rapports récents
-const recentReports = [
-  {
-    name: "Q1 Security Assessment",
-    status: "completed",
-    hostsFound: 45,
-    vulnerabilities: 12,
-    severity: "high",
-    created: "2025-08-23",
-  },
-  {
-    name: "Network Infrastructure Audit",
-    status: "processing",
-    hostsFound: 23,
-    vulnerabilities: 5,
-    severity: "medium",
-    created: "2025-08-23",
-  },
-  {
-    name: "Web Application Scan",
-    status: "completed",
-    hostsFound: 8,
-    vulnerabilities: 3,
-    severity: "low",
-    created: "2025-08-23",
-  },
-];
 
 const { request: agentsRequest, doc: _agentsDoc, agents } = useAgents();
 const { request: jobsRequest, doc: _jobsDoc, jobs } = useJobs();
@@ -112,6 +90,35 @@ const activeAgents = computed<ActiveAgent[]>(() =>
     };
   }),
 );
+
+const getMaxSeverity = (
+  distribution: Report["results"]["summary"]["severity_distribution"],
+): "critical" | "high" | "medium" | "low" | "info" => {
+  if (distribution.critical) return "critical";
+
+  if (distribution.high) return "high";
+
+  if (distribution.medium) return "medium";
+
+  return distribution.low ? "low" : "info";
+};
+
+const recentReports = computed<RecentReport[]>(() =>
+  // TODO: Filter by latest
+  reports.value
+    .slice(0, 3)
+    .map<RecentReport>(({ name, id, created_at, results: { summary } }) => {
+      return {
+        name,
+        id,
+        severity: getMaxSeverity(summary.severity_distribution),
+        vulnerabilities: summary.total_findings,
+        created: created_at
+          ? formatDistanceToNow(created_at, { addSuffix: true })
+          : "",
+      };
+    }),
+);
 </script>
 
 <template>
@@ -135,9 +142,9 @@ const activeAgents = computed<ActiveAgent[]>(() =>
 
     <DashboardStats v-else :stats />
 
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
       <template v-if="jobsSkeleton || agentsSkeleton">
-        <Skeleton v-for="i in 2" :key="i" class="h-[26rem]" />
+        <Skeleton v-for="i in 2" :key="i" class="h-[25.5rem] rounded-xl" />
       </template>
       <template v-else>
         <DashboardRecentJobs :jobs="recentJobs" />
@@ -145,6 +152,7 @@ const activeAgents = computed<ActiveAgent[]>(() =>
       </template>
     </div>
 
-    <DashboardRecentReports :reports="recentReports" />
+    <Skeleton v-if="reportsSkeleton" class="h-[15rem] rounded-xl" />
+    <DashboardRecentReports v-else :reports="recentReports" />
   </div>
 </template>
