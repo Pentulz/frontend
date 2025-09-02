@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import ReportSummary from "~/components/report/ReportSummary.vue";
 import DiscoveredHosts from "~/components/report/DiscoveredHosts.vue";
+import MergedArtifacts from "~/components/report/MergedArtifacts.vue";
 
 definePageMeta({
   breadcrumb: "Report",
@@ -36,11 +37,17 @@ const hosts = [
     services: ["SSH", "HTTP"],
   },
 ];
+
+const artifacts = [
+  { name: "nmap_scan.xml", type: "XML", size: "856 KB", sourceJob: "job-007", href: "#" },
+  { name: "traffic_analysis.pcap", type: "PCAP", size: "45.2 MB", sourceJob: "job-077", href: "#" },
+  { name: "something_really_long_to_truncat_just_in_….txt", type: "TXT", size: "4 KB", sourceJob: "job-420", href: "#" },
+];
 </script>
 
 <template>
   <div class="flex flex-col w-full gap-4 p-4">
-    <!-- En-tête -->
+    <!-- Header -->
     <div class="flex flex-col gap-1">
       <h1 class="text-3xl font-bold">{{ report.title }}</h1>
       <span class="text-muted-foreground">Report ID: {{ report.id }}</span>
@@ -57,5 +64,8 @@ const hosts = [
 
     <!-- Discovered Hosts -->
     <DiscoveredHosts :hosts="hosts" />
+
+    <!-- Merged Artifacts -->
+    <MergedArtifacts :artifacts="artifacts" />
   </div>
 </template>
