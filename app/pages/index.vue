@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { useAgents, useJobs, useReports } from "~/composables/use-api";
 import type { StatCard } from "~/components/dashboard/DashboardStats.vue";
+import type { RecentJob } from "~/components/dashboard/DashboardRecentJobs.vue";
 import {
   ActivityIcon,
   ServerIcon,
@@ -16,31 +17,6 @@ definePageMeta({
 useHead({
   title: "Dashboard",
 });
-
-// Données des jobs récents
-const recentJobs = [
-  {
-    name: "Network Security Scan",
-    agent: "agent-007",
-    status: "completed",
-    duration: "45m",
-    timestamp: "11:45:00",
-  },
-  {
-    name: "Vulnerability Assessment",
-    agent: "agent-007",
-    status: "running",
-    duration: "12m",
-    timestamp: "11:45:00",
-  },
-  {
-    name: "Port Discovery",
-    agent: "agent-007",
-    status: "failed",
-    duration: "2m",
-    timestamp: "11:45:00",
-  },
-];
 
 // Données des agents actifs
 const activeAgents = [
@@ -102,9 +78,9 @@ const { request: agentsRequest, doc: _agentsDoc, agents } = useAgents();
 const { request: jobsRequest, doc: _jobsDoc, jobs } = useJobs();
 const { request: reportsRequest, doc: _reportsDoc, reports } = useReports();
 
-const _agentsSkeleton = useSkeleton(agentsRequest.pending);
-const _jobsSkeleton = useSkeleton(jobsRequest.pending);
-const _reportsSkeleton = useSkeleton(reportsRequest.pending);
+const agentsSkeleton = useSkeleton(agentsRequest.pending);
+const jobsSkeleton = useSkeleton(jobsRequest.pending);
+const reportsSkeleton = useSkeleton(reportsRequest.pending);
 
 const stats = computed<StatCard[]>(() => [
   {
@@ -130,6 +106,16 @@ const stats = computed<StatCard[]>(() => [
     icon: TrendingUpIcon,
   },
 ]);
+
+const recentJobs = computed<RecentJob[]>(() =>
+  // TODO: Filter by latest
+  jobs.value.slice(0, 3).map<RecentJob>(({ agent_id, ...job }) => {
+    return {
+      ...job,
+      agent: agents.value.find(({ id }) => id === agent_id)?.name ?? "",
+    };
+  }),
+);
 </script>
 
 <template>
@@ -143,7 +129,7 @@ const stats = computed<StatCard[]>(() => [
       </div>
     </div>
 
-    <template v-if="_agentsSkeleton || _jobsSkeleton || _reportsSkeleton">
+    <template v-if="agentsSkeleton || jobsSkeleton || reportsSkeleton">
       <div
         class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4 py-[1px]"
       >
@@ -154,8 +140,13 @@ const stats = computed<StatCard[]>(() => [
     <DashboardStats v-else :stats />
 
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
-      <DashboardRecentJobs :jobs="recentJobs" />
-      <DashboardActiveAgents :agents="activeAgents" />
+      <template v-if="jobsSkeleton || agentsSkeleton">
+        <Skeleton v-for="i in 2" :key="i" class="h-[26rem]" />
+      </template>
+      <template v-else>
+        <DashboardRecentJobs :jobs="recentJobs" />
+        <DashboardActiveAgents :agents="activeAgents" />
+      </template>
     </div>
 
     <DashboardRecentReports :reports="recentReports" />

@@ -7,43 +7,37 @@ import {
   Badge,
   Button,
 } from "#components";
+import { ArrowRightIcon } from "lucide-vue-next";
+import { formatDistance } from "date-fns/formatDistance";
 
-export type Job = {
-  name: string;
+import type { Job } from "~/composables/use-api";
+
+export type RecentJob = Pick<
+  Job,
+  "id" | "name" | "status" | "completed_at" | "started_at" | "created_at"
+> & {
   agent: string;
-  status: "completed" | "running" | "failed";
-  duration: string;
-  timestamp: string;
 };
 
 export type Props = {
-  jobs?: Job[];
+  jobs?: RecentJob[];
 };
 
-const props = withDefaults(defineProps<Props>(), {
-  jobs: () => [],
-});
-
+const { jobs = [] } = defineProps<Props>();
 // Fonction pour obtenir la variante et le texte du badge selon le statut
-const getStatusInfo = (status: string) => {
+const getStatusInfo = (status: Job["status"]) => {
   switch (status) {
-    case "completed":
+    case "Completed":
       return {
         variant: "default",
         text: "completed",
         bgColor: "bg-green-100 text-green-800",
       };
-    case "running":
+    case "Running":
       return {
         variant: "secondary",
         text: "running",
         bgColor: "bg-blue-100 text-blue-800",
-      };
-    case "failed":
-      return {
-        variant: "destructive",
-        text: "failed",
-        bgColor: "bg-red-100 text-red-800",
       };
     default:
       return {
@@ -54,18 +48,17 @@ const getStatusInfo = (status: string) => {
   }
 };
 
-// Fonction pour obtenir le préfixe du timestamp
-const getTimestampPrefix = (status: string) => {
-  switch (status) {
-    case "completed":
-      return "Completed:";
-    case "running":
-      return "Started:";
-    case "failed":
-      return "Failed:";
-    default:
-      return "Updated:";
-  }
+const getStatusTime = ({
+  status,
+  created_at,
+  started_at,
+  completed_at,
+}: RecentJob) => {
+  if (status === "Completed") return completed_at;
+
+  if (status === "Running") return started_at;
+
+  return created_at;
 };
 </script>
 
@@ -78,8 +71,11 @@ const getTimestampPrefix = (status: string) => {
           variant="ghost"
           size="sm"
           class="text-sm text-muted-foreground hover:text-foreground"
+          as-child
         >
-          View All →
+          <NuxtLink to="/jobs">
+            View All <ArrowRightIcon class="size-4" />
+          </NuxtLink>
         </Button>
       </div>
     </CardHeader>
@@ -87,8 +83,8 @@ const getTimestampPrefix = (status: string) => {
     <CardContent>
       <div class="space-y-4">
         <div
-          v-for="job in props.jobs"
-          :key="`${job.name}-${job.agent}`"
+          v-for="job in jobs"
+          :key="job.id"
           class="flex items-center justify-between py-3 border-b border-border last:border-b-0"
         >
           <div class="flex-1">
@@ -98,12 +94,22 @@ const getTimestampPrefix = (status: string) => {
                 <div class="text-xs text-muted-foreground mt-1">
                   Agent: {{ job.agent }}
                 </div>
-                <div class="text-xs text-muted-foreground mt-1">
-                  Duration: {{ job.duration }}
+                <div
+                  v-if="job.started_at"
+                  class="text-xs text-muted-foreground mt-1"
+                >
+                  Duration:
+                  {{
+                    formatDistance(
+                      job.completed_at ?? new Date(),
+                      job.started_at,
+                      { addSuffix: false },
+                    )
+                  }}
                 </div>
               </div>
 
-              <div class="flex items-center gap-3">
+              <div class="flex items-start gap-3">
                 <Badge
                   :class="getStatusInfo(job.status).bgColor"
                   class="text-xs px-2 py-1 rounded"
@@ -112,9 +118,7 @@ const getTimestampPrefix = (status: string) => {
                 </Badge>
 
                 <div class="text-right text-xs text-muted-foreground">
-                  <div>
-                    {{ getTimestampPrefix(job.status) }} {{ job.timestamp }}
-                  </div>
+                  <DateTimeCell :datetime="getStatusTime(job)" />
                 </div>
               </div>
             </div>
