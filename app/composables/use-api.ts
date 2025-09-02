@@ -101,6 +101,30 @@ export const useReports = () => {
   return { request, doc, reports };
 };
 
+export const useReport = (id: string) => {
+  const { request, doc } = useSingleDocumentOf(
+    `/api/v1/reports/${id}`,
+    "reports",
+  );
+
+  const report = computed(() => {
+    if (!doc.value) return undefined;
+
+    const {
+      id,
+      attributes: { created_at, ...rest },
+    } = doc.value.data;
+
+    return {
+      ...rest,
+      id,
+      created_at: created_at ? new Date(created_at) : undefined,
+    };
+  });
+
+  return { request, doc, report };
+};
+
 export const useAgents = () => {
   const { request, doc } = useCollectionDocumentOf("/api/v1/agents", "agents");
 
@@ -118,6 +142,31 @@ export const useAgents = () => {
   });
 
   return { request, doc, agents };
+};
+
+export const useAgent = (id: string) => {
+  const { request, doc } = useSingleDocumentOf(
+    `/api/v1/agents/${id}`,
+    "agents",
+  );
+
+  const agent = computed(() => {
+    if (!doc.value) return undefined;
+
+    const {
+      id,
+      attributes: { created_at, last_seen_at, ...rest },
+    } = doc.value.data;
+
+    return {
+      ...rest,
+      id,
+      created_at: created_at ? new Date(created_at) : undefined,
+      last_seen_at: last_seen_at ? new Date(last_seen_at) : undefined,
+    };
+  });
+
+  return { request, doc, agent };
 };
 
 export const useJobs = () => {
