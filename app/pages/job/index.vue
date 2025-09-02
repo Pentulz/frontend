@@ -34,6 +34,7 @@ const agent = {
   type: "Container",
   ip: "10.0.0.7",
 };
+
 </script>
 
 <template>
@@ -73,6 +74,15 @@ const agent = {
         />
 
         <!-- (Timeline viendra plus tard) -->
+        <JobTimeline
+  :items="[
+    { title: 'Job queued', subtitle: 'Job added to processing queue', at: '2025-08-22 13:45:00', chip: null },
+    { title: 'Job started', subtitle: 'Agent started the job', at: '2025-08-22 13:48:00', chip: '3m' },
+    { title: 'Artifacts received', subtitle: 'Agent sent new artifacts', at: '2025-08-22 14:10:00', chip: '25m' },
+    { title: 'Artifacts processed', subtitle: 'Server finished parsing artifacts', at: '2025-08-22 14:45:00', chip: '60m' },
+  ]"
+/>
+
       </div>
     </div>
   </div>
