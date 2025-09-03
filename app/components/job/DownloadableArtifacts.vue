@@ -37,56 +37,60 @@ const humanBytes = (bytes: number) => {
       </CardTitle>
     </CardHeader>
 
-    <CardContent class="p-0">
-      <table class="w-full text-sm">
-        <!-- Header -->
-        <thead>
-          <tr class="text-xs text-muted-foreground text-left">
-            <th class="px-4 py-2 font-medium">File</th>
-            <th class="px-4 py-2 font-medium">Size</th>
-            <th class="px-4 py-2 font-medium text-right">Created</th>
-            <th class="px-4 py-2 font-medium text-right">Action</th>
-          </tr>
-        </thead>
+    <ScrollArea>
+      <CardContent class="px-2 overflow-scroll">
+        <table class="w-full text-sm">
+          <!-- Header -->
+          <thead>
+            <tr class="text-xs text-muted-foreground text-left">
+              <th class="px-4 py-2 font-medium">File</th>
+              <th class="px-4 py-2 font-medium">Size</th>
+              <th class="px-4 py-2 font-medium text-right">Created</th>
+              <th class="px-4 py-2 font-medium text-right">Action</th>
+            </tr>
+          </thead>
 
-        <!-- Body -->
-        <tbody class="divide-y">
-          <tr v-if="artifact" class="hover:bg-muted/30">
-            <!-- File -->
-            <td class="px-4 py-3">
-              <div class="flex items-center gap-2 min-w-0">
-                <FileTextIcon class="w-4 h-4 text-muted-foreground shrink-0" />
-                <span class="truncate font-medium">{{ artifact.name }}</span>
-              </div>
-            </td>
+          <!-- Body -->
+          <tbody class="divide-y">
+            <tr v-if="artifact" class="hover:bg-muted/30">
+              <!-- File -->
+              <td class="px-4 py-3">
+                <div class="flex items-center gap-2 min-w-0">
+                  <FileTextIcon
+                    class="w-4 h-4 text-muted-foreground shrink-0"
+                  />
+                  <span class="truncate font-medium">{{ artifact.name }}</span>
+                </div>
+              </td>
 
-            <!-- Size -->
-            <td class="px-4 py-3">
-              {{ humanBytes(artifact.results.size) }}
-            </td>
+              <!-- Size -->
+              <td class="px-4 py-3">
+                {{ humanBytes(artifact.results.size) }}
+              </td>
 
-            <!-- Created -->
-            <td class="px-4 py-3 text-right">
-              <NuxtTime
-                v-if="artifact.createdAt"
-                :datetime="artifact.createdAt"
-                day="2-digit"
-                month="2-digit"
-                year="numeric"
-                hour="2-digit"
-                minute="2-digit"
-                second="2-digit"
-                locale="fr-FR"
-              />
-            </td>
+              <!-- Created -->
+              <td class="px-4 py-3 text-right">
+                <NuxtTime
+                  v-if="artifact.createdAt"
+                  :datetime="artifact.createdAt"
+                  day="2-digit"
+                  month="2-digit"
+                  year="numeric"
+                  hour="2-digit"
+                  minute="2-digit"
+                  second="2-digit"
+                  locale="fr-FR"
+                />
+              </td>
 
-            <!-- Action -->
-            <td class="px-4 py-3 text-right">
-              <DownloadBlob :blob="artifact.results" :name="artifact.name" />
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    </CardContent>
+              <!-- Action -->
+              <td class="px-4 py-3 text-right">
+                <DownloadBlob :blob="artifact.results" :name="artifact.name" />
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </CardContent>
+    </ScrollArea>
   </Card>
 </template>

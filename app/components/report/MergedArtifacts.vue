@@ -37,7 +37,7 @@ const humanBytes = (bytes: number) => {
       </CardTitle>
     </CardHeader>
 
-    <CardContent class="p-0">
+    <CardContent class="px-2 overflow-scroll">
       <table class="w-full text-sm">
         <!-- Header -->
         <thead>
