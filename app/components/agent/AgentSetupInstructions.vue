@@ -6,6 +6,8 @@ import {
   DialogTitle,
   DialogDescription,
   DialogTrigger,
+  Input,
+  Label,
 } from "#components";
 import { TerminalIcon, ClipboardIcon } from "lucide-vue-next";
 
@@ -18,10 +20,11 @@ const props = defineProps<{
 function copy(text: string) {
   navigator.clipboard.writeText(text);
 }
+const timeout = ref<number>(30);
 
 const args = computed(
   () =>
-    `\\\n--token "${props.agentKey}" \\\n--api-url "${config.public.apiBase}/api/v1" \\\n--refresh-timeout 30`,
+    `\\\n--token "${props.agentKey}" \\\n--api-url "${config.public.apiBase}/api/v1" \\\n--refresh-timeout ${timeout.value ?? 1}`,
 );
 
 // 🟢 Préparation des commandes
@@ -31,6 +34,7 @@ const dockerCmd = computed(
 );
 
 const cliCmd = computed(() => `agent ${args.value}`);
+const timeoutId = useId();
 </script>
 
 <template>
@@ -50,6 +54,19 @@ const cliCmd = computed(() => `agent ${args.value}`);
       </DialogHeader>
 
       <div class="flex flex-col gap-6 py-2">
+        <div class="flex flex-col gap-2">
+          <div class="flex flex-col gap-2">
+            <Label :for="timeoutId">Refresh rate (seconds)</Label>
+            <Input
+              :id="timeoutId"
+              v-model="timeout"
+              class="bg-background"
+              type="number"
+              min="1"
+              placeholder="Agent refresh period in seconds"
+            />
+          </div>
+        </div>
         <!-- Option 1 -->
         <div class="flex flex-col gap-2">
           <p class="font-medium">Option 1: Docker Setup</p>
@@ -75,7 +92,7 @@ const cliCmd = computed(() => `agent ${args.value}`);
             >
           </p>
           <Button class="w-fit" as-child>
-            <NuxtLink to="https://github.com/Pentulz/frontend/releases">
+            <NuxtLink to="https://github.com/Pentulz/agent/releases">
               Download from GitHub Releases
             </NuxtLink>
           </Button>
