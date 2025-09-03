@@ -21,7 +21,7 @@ function copy(text: string) {
 
 const args = computed(
   () =>
-    `\\\n--token "${props.agentKey}" \\\n--api-url "${config.public.apiBase}" \\\n--refresh-timeout 30`,
+    `\\\n--token "${props.agentKey}" \\\n--api-url "${config.public.apiBase}/api/v1" \\\n--refresh-timeout 30`,
 );
 
 // 🟢 Préparation des commandes
@@ -67,7 +67,12 @@ const cliCmd = computed(() => `agent ${args.value}`);
 
         <!-- Option 2 -->
         <div class="flex flex-col gap-2">
-          <p class="font-medium">Option 2: CLI Setup</p>
+          <p class="font-medium">
+            Option 2: CLI Setup
+            <span class="text-muted-foreground font-normal"
+              >(requires admin/sudo permissions to run properly)</span
+            >
+          </p>
           <Button class="w-fit" as-child>
             <NuxtLink to="https://github.com/Pentulz/frontend/releases">
               Download from GitHub Releases
