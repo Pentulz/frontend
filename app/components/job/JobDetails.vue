@@ -7,23 +7,23 @@ import {
   Separator,
 } from "#components";
 import { CogIcon } from "lucide-vue-next";
+import { interval, intervalToDuration, formatDuration } from "date-fns";
 
-type Dateish = string | Date;
+import type { Job } from "~/composables/use-api";
 
-const props = defineProps<{
-  description?: string;
-  duration?: string; // ex: "1h 15m"
-  started?: Dateish; // "2025-08-22 13:45:00"
-  completed?: Dateish; // "2025-08-22 15:00:00"
-  toolLabel?: string; // ex: "nmap:"
-  command?: string; // ex: "-sS -sV --top-ports 1000 --open 192.168.1.0/24"
+type JobDetails = Pick<
+  Job,
+  | "description"
+  | "started_at"
+  | "completed_at"
+  | "created_at"
+  | "action"
+  | "results"
+>;
+
+const { job } = defineProps<{
+  job: JobDetails;
 }>();
-
-const fmt = (d?: Dateish) => {
-  if (!d) return "—";
-  const dd = typeof d === "string" ? new Date(d) : d;
-  return isNaN(+dd) ? String(d) : dd.toLocaleString();
-};
 </script>
 
 <template>
@@ -39,42 +39,72 @@ const fmt = (d?: Dateish) => {
     <CardContent class="flex flex-col gap-6">
       <!-- Description -->
       <div class="flex flex-col gap-2">
-        <p class="text-sm font-medium text-neutral-500">Description</p>
-        <p class="text-xl leading-7">{{ props.description || "—" }}</p>
+        <p class="text-sm font-medium text-muted-foreground">Description</p>
+        <p class="text-xl leading-7">{{ job.description }}</p>
       </div>
 
       <Separator />
 
       <!-- Execution Info (labels à gauche, valeurs à droite) -->
       <div class="flex flex-col gap-3">
-        <p class="text-sm font-medium text-neutral-500">Execution Info</p>
+        <p class="text-sm font-medium text-muted-foreground">Execution Info</p>
 
-        <div class="grid grid-cols-2 gap-y-3">
-          <div class="text-sm text-neutral-500">Duration:</div>
-          <div class="text-sm text-right">{{ props.duration || "—" }}</div>
-
-          <div class="text-sm text-neutral-500">Started:</div>
-          <div class="text-sm text-right">{{ fmt(props.started) }}</div>
-
-          <div class="text-sm text-neutral-500">Completed:</div>
-          <div class="text-sm text-right">{{ fmt(props.completed) }}</div>
-        </div>
-      </div>
-
-      <Separator />
-
-      <!-- Instructions -->
-      <div class="flex flex-col gap-3">
-        <p class="text-sm font-medium text-neutral-500">Instructions</p>
-
-        <div class="grid grid-cols-2 items-start">
-          <div class="text-sm text-neutral-500">
-            {{ props.toolLabel || "nmap:" }}
+        <div class="flex flex-col gap-3">
+          <div class="flex flex-row justify-between">
+            <div class="text-sm text-muted-foreground">Duration:</div>
+            <div class="text-sm text-right">
+              <template v-if="job.started_at && job.completed_at">
+                {{
+                  formatDuration(
+                    intervalToDuration(
+                      interval(job.started_at, job.completed_at),
+                    ),
+                  )
+                }}
+              </template>
+              <template v-else>-</template>
+            </div>
           </div>
-          <div class="text-right">
-            <span class="font-mono text-base">
-              {{ props.command || "—" }}
-            </span>
+
+          <div class="flex flex-row justify-between">
+            <div class="text-sm text-muted-foreground">Started:</div>
+            <div class="text-sm text-right">
+              <NuxtTime
+                v-if="job.started_at"
+                :datetime="job.started_at"
+                day="2-digit"
+                month="2-digit"
+                year="numeric"
+                hour="2-digit"
+                minute="2-digit"
+                second="2-digit"
+                locale="fr-FR"
+              /><template v-else>-</template>
+            </div>
+          </div>
+
+          <div class="flex flex-row justify-between">
+            <div class="text-sm text-muted-foreground">Completed:</div>
+            <div class="text-sm text-right">
+              <NuxtTime
+                v-if="job.completed_at"
+                :datetime="job.completed_at"
+                day="2-digit"
+                month="2-digit"
+                year="numeric"
+                hour="2-digit"
+                minute="2-digit"
+                second="2-digit"
+                locale="fr-FR"
+              /><template v-else>-</template>
+            </div>
+          </div>
+
+          <div class="flex flex-row justify-between">
+            <div class="text-sm text-muted-foreground">Instructions:</div>
+            <div class="text-sm text-right font-mono break-after-auto">
+              {{ `${job.action.cmd} ${job.action.args.join(" ")}` }}
+            </div>
           </div>
         </div>
       </div>

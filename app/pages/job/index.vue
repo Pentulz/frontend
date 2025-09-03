@@ -68,15 +68,6 @@ const agent = {
     <div class="grid grid-cols-1 lg:grid-cols-2 2xl:grid-cols-3 gap-4">
       <!-- Colonne gauche -->
       <div class="flex flex-col gap-4 2xl:col-span-2">
-        <JobDetails
-          :description="job.description"
-          :duration="job.duration"
-          :started="job.started"
-          :completed="job.completed"
-          :tool-label="job.toolLabel"
-          :command="job.command"
-        />
-
         <DownloadableArtifacts :artifacts="artifacts" />
       </div>
 

@@ -1,6 +1,5 @@
 <script setup lang="ts">
-import type { JsonDocument, ClientError } from "~/lib/api";
-import { isSingleDocumentOf } from "~/lib/api";
+import JobDetails from "~/components/job/JobDetails.vue";
 
 definePageMeta({
   breadcrumb: `Job`,
@@ -8,30 +7,14 @@ definePageMeta({
 });
 
 const route = useRoute();
+
 const {
-  public: { apiBase },
-} = useRuntimeConfig();
+  request: { error, pending },
+  job,
+} = useJob(route.params.id as string);
 
-const { data, pending, error } = useFetch<JsonDocument, ClientError>(
-  `/api/v1/jobs/${route.params.id}`,
-  {
-    baseURL: apiBase,
-    server: false,
-    lazy: false,
-  },
-);
-
-const doc = computed(() =>
-  data.value && isSingleDocumentOf(data.value, "jobs") ? data.value : undefined,
-);
-
-const job = computed(() => {
-  if (!doc.value) return undefined;
-
-  return {
-    id: doc.value.data.id,
-    ...doc.value.data.attributes,
-  };
+useHead({
+  title: () => job.value?.name ?? "Loading job...",
 });
 
 useBackendError(error);
@@ -63,7 +46,7 @@ const showSkeleton = useSkeleton(pending);
         </template>
 
         <template v-else>
-          <div>Content</div>
+          <JobDetails v-if="job" :job />
         </template>
       </div>
       <div class="flex flex-col gap-4">
