@@ -37,7 +37,8 @@ const { request: agentsRequest, doc: _agentsDoc, agents } = useAgents();
 const { request: jobsRequest, doc: _jobsDoc, jobs } = useJobs();
 const { request: reportsRequest, doc: _reportsDoc, reports } = useReports();
 
-const _refresh = useRefresh([agentsRequest, jobsRequest, reportsRequest]);
+// doesn't work unless it's assigned to a variable ???
+const _ = useRefresh([agentsRequest, jobsRequest, reportsRequest]);
 
 const agentsSkeleton = useSkeleton(agentsRequest.pending, agentsRequest.data);
 const jobsSkeleton = useSkeleton(jobsRequest.pending, jobsRequest.data);

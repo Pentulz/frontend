@@ -7,7 +7,6 @@ export const useRefresh = (data: AsyncData<unknown, unknown>[]) => {
 
   const interval = computed(() => {
     return useIntervalFn(() => {
-      console.log("refresh");
       data.forEach(({ refresh }) => refresh());
     }, config.refresh);
   });

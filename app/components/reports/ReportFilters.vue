@@ -11,14 +11,14 @@ import {
 import { Label, Button } from "#components";
 import { Card, CardHeader, CardTitle, CardContent } from "~/components/ui/card";
 import { FilterIcon, SearchIcon, RotateCcwIcon } from "lucide-vue-next";
-import type { Report } from ".";
+import type { Report } from "~/composables/use-api";
 
 const { table } = useDataTable<Report, unknown>();
 
-const statuses = computed(() =>
+const levels = computed(() =>
   Array.from<string>(
     table
-      .getColumn("status")
+      .getColumn("results")
       ?.getFacetedUniqueValues()
       .keys()
       .filter(Boolean) ?? [],
@@ -56,23 +56,23 @@ const statusId = useId();
       </div>
 
       <div class="flex flex-col gap-2">
-        <Label :for="statusId">Status</Label>
+        <Label :for="statusId">Risk levels</Label>
         <div class="flex flex-row gap-2">
           <Select
             multiple
             :model-value="
-              (table.getColumn('status')?.getFilterValue() as string[]) ?? []
+              (table.getColumn('results')?.getFilterValue() as string[]) ?? []
             "
             @update:model-value="
-              table.getColumn('status')?.setFilterValue($event)
+              table.getColumn('results')?.setFilterValue($event)
             "
           >
             <SelectTrigger class="lg:max-w-sm w-full">
-              <SelectValue placeholder="All statuses" />
+              <SelectValue placeholder="All levels" />
             </SelectTrigger>
             <SelectContent>
               <SelectItem
-                v-for="status in statuses"
+                v-for="status in levels"
                 :key="status"
                 :value="status"
               >
