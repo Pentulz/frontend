@@ -79,7 +79,11 @@ const showSkeleton = useSkeleton(pending);
         </template>
 
         <template v-else>
-          <AgentQuickActions v-if="agent" :agent-key="agent?.token" />
+          <AgentQuickActions
+            v-if="agent"
+            :agent-key="agent.token"
+            :agent-id="agent.id"
+          />
           <AgentCapabilities :tools="agent?.available_tools ?? []" />
         </template>
       </div>

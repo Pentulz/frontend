@@ -1,5 +1,6 @@
 <script setup>
 import { CreateJob } from "~/components/forms";
+import { PlayIcon } from "lucide-vue-next";
 definePageMeta({
   breadcrumb: "Jobs",
   title: "Jobs",
@@ -18,7 +19,12 @@ useHead({
           >Manage and monitor all job executions</span
         >
       </div>
-      <CreateJob />
+      <CreateJob>
+        <Button variant="outline" class="cursor-pointer">
+          <PlayIcon class="size-6" />
+          <span>Start New Job</span>
+        </Button>
+      </CreateJob>
     </div>
 
     <!-- Table space -->

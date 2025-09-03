@@ -2,12 +2,14 @@
 import { Card, CardHeader, CardTitle, CardContent, Button } from "#components";
 import { PlayIcon, SettingsIcon, BookmarkIcon } from "lucide-vue-next";
 import AgentSetupInstructions from "~/components/agent/AgentSetupInstructions.vue";
+import CreateJob from "../forms/CreateJob.vue";
 
 type Props = {
   agentKey: string;
+  agentId: string;
 };
 
-const { agentKey } = defineProps<Props>();
+const { agentKey, agentId } = defineProps<Props>();
 
 const showSetup = ref(false);
 </script>
@@ -22,10 +24,12 @@ const showSetup = ref(false);
     </CardHeader>
 
     <CardContent class="flex flex-col gap-2">
-      <Button variant="outline" class="w-full justify-start gap-2">
-        <PlayIcon class="w-4 h-4" />
-        Start New Job
-      </Button>
+      <CreateJob :agent-id="agentId">
+        <Button variant="outline" class="w-full justify-start gap-2">
+          <PlayIcon class="w-4 h-4" />
+          Start New Job
+        </Button>
+      </CreateJob>
 
       <Button
         variant="outline"

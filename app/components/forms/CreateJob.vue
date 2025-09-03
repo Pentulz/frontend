@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import {
-  PlayIcon,
   ClipboardListIcon,
   CheckIcon,
   DotIcon,
@@ -55,6 +54,8 @@ import {
   isSingleDocumentOf,
 } from "~/lib/api";
 
+const { agentId = undefined } = defineProps<{ agentId?: string }>();
+
 const {
   public: { apiBase },
 } = useRuntimeConfig();
@@ -106,6 +107,9 @@ const { handleSubmit, values, validate, meta, resetForm } = useForm({
       stepSchemas[stepIndex.value - 1] as unknown as TypedSchema<MergedValues>,
   ),
   keepValuesOnUnmount: true,
+  initialValues: {
+    agent_id: agentId,
+  },
 });
 
 const onSubmit = handleSubmit(
@@ -171,10 +175,7 @@ const toolMap = computed<{ [key: string]: SystemTool }>(
 <template>
   <Dialog v-model:open="open">
     <DialogTrigger as-child>
-      <Button variant="outline" class="cursor-pointer">
-        <PlayIcon class="size-6" />
-        <span>Start New Job</span>
-      </Button>
+      <slot />
     </DialogTrigger>
     <DialogContent>
       <DialogHeader>
