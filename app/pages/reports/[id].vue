@@ -9,19 +9,19 @@ definePageMeta({
 
 const route = useRoute();
 
-const {
-  request: { error, pending },
-  report,
-} = useReport(route.params.id as string);
+const { request, report } = useReport(route.params.id as string);
 
-const {
-  request: { pending: jobsPending },
-  jobs,
-} = useJobs();
+const { pending, error } = request;
+
+const { request: jobsRequest, jobs } = useJobs();
+
+const { pending: jobsPending } = jobsRequest;
 
 useBackendError(error);
 const showSkeleton = useSkeleton(pending);
 const jobsSkeleton = useSkeleton(jobsPending);
+
+const _ = useRefresh([request, jobsRequest]);
 
 const artifacts = computed(() => {
   if (!report.value?.results.metadata.jobs_ids) return [];

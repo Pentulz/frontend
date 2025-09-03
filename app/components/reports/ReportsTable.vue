@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import type { Report } from "~/composables/use-api";
 import {
   DataTableProvider,
   DataTable,
@@ -9,47 +8,10 @@ import { Card, CardHeader, CardTitle, CardContent } from "#components";
 import { FileChartColumnIcon, AlertCircleIcon } from "lucide-vue-next";
 import { columns } from "./columns";
 import ReportFilters from "./ReportFilters.vue";
-import {
-  type ClientError,
-  type JsonDocument,
-  isCollectionDocumentOf,
-} from "~/lib/api";
 
-const config = useRuntimeConfig();
-
-const { data, pending, error } = useFetch<JsonDocument, ClientError>(
-  "/api/v1/reports",
-  {
-    server: false,
-    lazy: true,
-    baseURL: config.public.apiBase,
-  },
-);
-
-const doc = computed(() =>
-  data.value && isCollectionDocumentOf(data.value, "reports")
-    ? data.value
-    : null,
-);
-
-const reports = computed<Report[]>(() => {
-  if (!doc.value) return [];
-
-  return doc.value.data.map<Report>(
-    ({
-      id,
-      attributes: {
-        created_at,
-        results: { risk_level = null, status = null },
-      },
-    }) => ({
-      id: id,
-      created_at: created_at ? new Date(created_at) : null,
-      risk_level: risk_level,
-      status: status,
-    }),
-  );
-});
+const { request, doc, reports } = useReports();
+const { error, pending } = request;
+const _ = useRefresh([request]);
 </script>
 <template>
   <DataTableProvider :columns="columns" :data="reports">
