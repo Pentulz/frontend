@@ -10,11 +10,8 @@ definePageMeta({
 
 const route = useRoute();
 
-const {
-  request: { error, pending },
-  agent,
-} = useAgent(route.params.id as string);
-
+const { request, agent } = useAgent(route.params.id as string);
+const { error, pending } = request;
 const agentDetails = computed<AgentDetails>(() => {
   return agent.value as AgentDetails;
 });
@@ -39,6 +36,7 @@ const recentJobs = computed<Job[]>(() => {
     });
 });
 
+const _ = useRefresh([request]);
 useBackendError(error);
 const showSkeleton = useSkeleton(pending);
 </script>

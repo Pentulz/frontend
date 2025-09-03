@@ -10,10 +10,9 @@ definePageMeta({
 
 const route = useRoute();
 
-const {
-  request: { error, pending },
-  job,
-} = useJob(route.params.id as string);
+const { request, job } = useJob(route.params.id as string);
+
+const { error, pending } = request;
 
 useHead({
   title: () => job.value?.name ?? "Loading job...",
@@ -29,6 +28,7 @@ const artifact = computed(() => {
   };
 });
 
+const _ = useRefresh([request]);
 useBackendError(error);
 const showSkeleton = useSkeleton(pending);
 </script>
