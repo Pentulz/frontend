@@ -24,7 +24,7 @@ const duration = ({ started_at, completed_at }: Job) => {
       </CardTitle>
     </CardHeader>
 
-    <CardContent class="p-0">
+    <CardContent class="mx-2 overflow-scroll">
       <table class="w-full text-sm">
         <!-- Header -->
         <thead>

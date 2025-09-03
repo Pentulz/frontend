@@ -36,12 +36,12 @@ defineProps<{
             </div>
 
             <!-- version -->
-            <span
+            <div
               v-if="t.version"
-              class="text-[11px] rounded-full border bg-white px-2 py-0.5 text-muted-foreground"
+              class="text-[11px] rounded-full border bg-white px-2 py-0.5 text-muted-foreground overflow-hidden truncate max-w-32 lg:max-w-48 text-ellipsis"
             >
               {{ t.version }}
-            </span>
+            </div>
           </div>
         </div>
       </div>

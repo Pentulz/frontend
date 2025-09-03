@@ -1,6 +1,7 @@
 <script setup lang="ts">
-import type { JsonDocument, ClientError } from "~/lib/api";
-import { isSingleDocumentOf } from "~/lib/api";
+import { JobAgentCard } from "#components";
+import JobDetails from "~/components/job/JobDetails.vue";
+import DownloadableArtifacts from "~/components/job/DownloadableArtifacts.vue";
 
 definePageMeta({
   breadcrumb: `Job`,
@@ -8,29 +9,23 @@ definePageMeta({
 });
 
 const route = useRoute();
+
 const {
-  public: { apiBase },
-} = useRuntimeConfig();
+  request: { error, pending },
+  job,
+} = useJob(route.params.id as string);
 
-const { data, pending, error } = useFetch<JsonDocument, ClientError>(
-  `/api/v1/jobs/${route.params.id}`,
-  {
-    baseURL: apiBase,
-    server: false,
-    lazy: false,
-  },
-);
+useHead({
+  title: () => job.value?.name ?? "Loading job...",
+});
 
-const doc = computed(() =>
-  data.value && isSingleDocumentOf(data.value, "jobs") ? data.value : undefined,
-);
-
-const job = computed(() => {
-  if (!doc.value) return undefined;
+const artifact = computed(() => {
+  if (!job.value?.completed_at || !job.value.results) return undefined;
 
   return {
-    id: doc.value.data.id,
-    ...doc.value.data.attributes,
+    name: job.value.name,
+    createdAt: job.value.completed_at,
+    results: new Blob([job.value.results], { type: "text/plain" }),
   };
 });
 
@@ -63,7 +58,8 @@ const showSkeleton = useSkeleton(pending);
         </template>
 
         <template v-else>
-          <div>Content</div>
+          <JobDetails v-if="job" :job />
+          <DownloadableArtifacts :artifact />
         </template>
       </div>
       <div class="flex flex-col gap-4">
@@ -73,7 +69,7 @@ const showSkeleton = useSkeleton(pending);
         </template>
 
         <template v-else>
-          <div>Content</div>
+          <JobAgentCard v-if="job" :agent-id="job.agent_id" />
         </template>
       </div>
     </div>
