@@ -9,7 +9,7 @@ type Props = {
   agentId: string;
 };
 
-const { agentKey, agentId } = defineProps<Props>();
+const { agentId } = defineProps<Props>();
 </script>
 
 <template>
@@ -29,7 +29,7 @@ const { agentKey, agentId } = defineProps<Props>();
         </Button>
       </CreateJob>
 
-      <AgentSetupInstructions :agent-key="agentKey">
+      <AgentSetupInstructions :agent-key="agentId">
         <Button variant="outline" class="w-full justify-start gap-2">
           <SettingsIcon class="w-4 h-4" />
           Configure Agent
