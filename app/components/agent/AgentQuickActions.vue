@@ -10,8 +10,6 @@ type Props = {
 };
 
 const { agentKey, agentId } = defineProps<Props>();
-
-const showSetup = ref(false);
 </script>
 
 <template>
@@ -31,21 +29,14 @@ const showSetup = ref(false);
         </Button>
       </CreateJob>
 
-      <Button
-        variant="outline"
-        class="w-full justify-start gap-2"
-        @click="showSetup = true"
-      >
-        <SettingsIcon class="w-4 h-4" />
-        Configure Agent
-      </Button>
+      <AgentSetupInstructions :agent-key="agentKey">
+        <Button variant="outline" class="w-full justify-start gap-2">
+          <SettingsIcon class="w-4 h-4" />
+          Configure Agent
+        </Button>
+      </AgentSetupInstructions>
     </CardContent>
   </Card>
 
   <!-- Popup -->
-  <AgentSetupInstructions
-    :open="showSetup"
-    :on-close="() => (showSetup = false)"
-    :agent-key="agentKey"
-  />
 </template>
