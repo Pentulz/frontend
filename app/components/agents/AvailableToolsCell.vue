@@ -12,14 +12,15 @@ const { availableTools = [] } = defineProps<Props>();
 </script>
 
 <template>
-  <div class="grid grid-cols-1 lg:grid-cols-2 gap-2 auto-rows-auto">
+  <div class="flex gap-2 flex-wrap w-64 overflow-hidden">
     <Badge
       v-for="tool in availableTools"
       :key="tool.cmd"
       variant="outline"
-      class="w-full justify-center py-1 px-3"
+      class="block text-start py-1 px-3 truncate max-w-full"
     >
-      {{ tool.cmd }}<span v-if="tool.version">: {{ tool.version }}</span>
+      {{ tool.cmd
+      }}<template v-if="tool.version">: {{ tool.version }} </template>
     </Badge>
   </div>
 </template>
