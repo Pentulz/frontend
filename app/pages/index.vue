@@ -14,7 +14,12 @@ import {
   TrendingUpIcon,
 } from "lucide-vue-next";
 import type { ActiveAgent } from "~/components/dashboard/DashboardActiveAgents.vue";
-import { interval, intervalToDuration, formatDistanceToNow } from "date-fns";
+import {
+  interval,
+  intervalToDuration,
+  formatDistanceToNow,
+  constructNow,
+} from "date-fns";
 import type { RecentReport } from "~/components/dashboard/DashboardRecentReports.vue";
 
 definePageMeta({
@@ -26,13 +31,20 @@ useHead({
   title: "Dashboard",
 });
 
+const appConfig = useAppConfig();
+
 const { request: agentsRequest, doc: _agentsDoc, agents } = useAgents();
 const { request: jobsRequest, doc: _jobsDoc, jobs } = useJobs();
 const { request: reportsRequest, doc: _reportsDoc, reports } = useReports();
 
-const agentsSkeleton = useSkeleton(agentsRequest.pending);
-const jobsSkeleton = useSkeleton(jobsRequest.pending);
-const reportsSkeleton = useSkeleton(reportsRequest.pending);
+const _refresh = useRefresh([agentsRequest, jobsRequest, reportsRequest]);
+
+const agentsSkeleton = useSkeleton(agentsRequest.pending, agentsRequest.data);
+const jobsSkeleton = useSkeleton(jobsRequest.pending, jobsRequest.data);
+const reportsSkeleton = useSkeleton(
+  reportsRequest.pending,
+  reportsRequest.data,
+);
 
 const stats = computed<StatCard[]>(() => [
   {
@@ -42,9 +54,18 @@ const stats = computed<StatCard[]>(() => [
   },
   {
     title: "Active Agents",
-    // TODO: Check if seen 20 mins ago
-    value: agents.value.map(({ last_seen_at }) => last_seen_at).filter(Boolean)
-      .length,
+    value: agents.value
+      .filter((v) => v.last_seen_at !== undefined)
+      .map(({ last_seen_at }) =>
+        intervalToDuration(
+          interval(last_seen_at as Date, constructNow(undefined)),
+        ),
+      )
+      .filter(
+        (duration) =>
+          duration.minutes &&
+          duration.minutes < appConfig.activeMinutesThreshold,
+      ).length,
     icon: ServerIcon,
   },
   {
