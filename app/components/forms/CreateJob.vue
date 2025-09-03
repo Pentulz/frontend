@@ -121,7 +121,7 @@ const onSubmit = handleSubmit(
             description,
             agent_id,
             action: {
-              name: v.name,
+              cmd: v.cmd,
               variant: v.variant,
               args: v.args,
             },
@@ -313,7 +313,7 @@ const toolMap = computed<{ [key: string]: SystemTool }>(
                           :key="i.cmd"
                           type="button"
                           :disabled="!toolMap[i.cmd]"
-                          @click="() => push({ name: i.cmd })"
+                          @click="() => push({ cmd: i.cmd })"
                         >
                           {{ i.cmd }}
                         </Button>
@@ -352,7 +352,7 @@ const toolMap = computed<{ [key: string]: SystemTool }>(
                             class="flex flex-row items-center justify-between rounded-md border shadow-sm p-2 h-fit bg-white"
                           >
                             <span class="pl-2">{{
-                              (field.value as { name: string }).name
+                              (field.value as { cmd: string }).cmd
                             }}</span>
                             <Button
                               variant="default"
@@ -378,7 +378,7 @@ const toolMap = computed<{ [key: string]: SystemTool }>(
                     <FormField name="actions">
                       <div
                         v-for="(field, idx) in fields as FieldEntry<{
-                          name: string;
+                          cmd: string;
                           variant?: string;
                           args: { [key: string]: unknown };
                         }>[]"
@@ -388,13 +388,13 @@ const toolMap = computed<{ [key: string]: SystemTool }>(
                           <FormItem>
                             <FormLabel
                               >Configuration for
-                              {{ field.value.name }}</FormLabel
+                              {{ field.value.cmd }}</FormLabel
                             >
                             <FormControl>
                               <div
                                 class="border rounded-lg bg-muted px-4 py-3 flex flex-col gap-2"
                               >
-                                <template v-if="toolMap[field.value.name]">
+                                <template v-if="toolMap[field.value.cmd]">
                                   <!-- Choose Mode/Variant -->
                                   <FormField
                                     v-slot="{ componentField }"
@@ -413,7 +413,7 @@ const toolMap = computed<{ [key: string]: SystemTool }>(
                                               {{
                                                 componentField.modelValue
                                                   ? toolMap[
-                                                      field.value.name
+                                                      field.value.cmd
                                                     ]?.variants.find(
                                                       (v) =>
                                                         v.id ===
@@ -426,7 +426,7 @@ const toolMap = computed<{ [key: string]: SystemTool }>(
                                           <SelectContent>
                                             <SelectItem
                                               v-for="variant in toolMap[
-                                                field.value.name
+                                                field.value.cmd
                                               ]?.variants ?? []"
                                               :key="variant.id"
                                               :value="variant.id"
@@ -457,7 +457,7 @@ const toolMap = computed<{ [key: string]: SystemTool }>(
                                   >
                                     <FormField
                                       v-for="argDef in toolMap[
-                                        field.value.name
+                                        field.value.cmd
                                       ]?.variants.find(
                                         (v) => v.id == field.value.variant,
                                       )?.argument_definitions"
@@ -512,7 +512,7 @@ const toolMap = computed<{ [key: string]: SystemTool }>(
 
                                 <span v-else
                                   >No configuration available for
-                                  {{ field.value.name }}</span
+                                  {{ field.value.cmd }}</span
                                 >
                               </div>
                             </FormControl>
