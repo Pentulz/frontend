@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { JobAgentCard } from "#components";
 import JobDetails from "~/components/job/JobDetails.vue";
+import DownloadableArtifacts from "~/components/job/DownloadableArtifacts.vue";
 
 definePageMeta({
   breadcrumb: `Job`,
@@ -16,6 +17,16 @@ const {
 
 useHead({
   title: () => job.value?.name ?? "Loading job...",
+});
+
+const artifact = computed(() => {
+  if (!job.value?.completed_at || !job.value.results) return undefined;
+
+  return {
+    name: job.value.name,
+    createdAt: job.value.completed_at,
+    results: new Blob([job.value.results], { type: "text/plain" }),
+  };
 });
 
 useBackendError(error);
@@ -48,6 +59,7 @@ const showSkeleton = useSkeleton(pending);
 
         <template v-else>
           <JobDetails v-if="job" :job />
+          <DownloadableArtifacts :artifact />
         </template>
       </div>
       <div class="flex flex-col gap-4">

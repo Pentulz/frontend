@@ -1,16 +1,31 @@
 <script setup lang="ts">
-import { Card, CardHeader, CardTitle, CardContent, Badge } from "#components";
+import { Card, CardHeader, CardTitle, CardContent } from "#components";
 import { DownloadIcon, FileTextIcon } from "lucide-vue-next";
+import DownloadBlob from "../report/DownloadBlob.vue";
 
 type Artifact = {
-  name: string; // "nmap_scan.xml"
-  type: string; // "data" | "logs" | ...
-  size: string; // "45.2 MB"
-  created: string; // "2025-08-22 19:23:99"
-  href?: string; // lien de téléchargement
+  name: string;
+  createdAt: Date;
+  results: Blob;
 };
 
-defineProps<{ artifacts: Artifact[] }>();
+const { artifact = undefined } = defineProps<{ artifact?: Artifact }>();
+
+const humanBytes = (bytes: number) => {
+  if (!Number.isFinite(bytes)) return "NaN";
+  const units = ["B", "KB", "MB", "GB"];
+  let val = Math.abs(bytes);
+  let i = 0;
+
+  while (val >= 1024 && i < units.length - 1) {
+    val /= 1024;
+    i++;
+  }
+
+  const dp = i === 0 ? 0 : 2; // no decimals for plain bytes
+  const num = i === 0 ? Math.round(val) : Number(val.toFixed(dp));
+  return `${num} ${units[i]}`;
+};
 </script>
 
 <template>
@@ -18,7 +33,7 @@ defineProps<{ artifacts: Artifact[] }>();
     <CardHeader>
       <CardTitle class="flex items-center gap-2">
         <DownloadIcon class="w-5 h-5" />
-        <span>Downloadable Artifacts</span>
+        <span>Downloadable Artifact</span>
       </CardTitle>
     </CardHeader>
 
@@ -28,7 +43,6 @@ defineProps<{ artifacts: Artifact[] }>();
         <thead>
           <tr class="text-xs text-muted-foreground text-left">
             <th class="px-4 py-2 font-medium">File</th>
-            <th class="px-4 py-2 font-medium">Type</th>
             <th class="px-4 py-2 font-medium">Size</th>
             <th class="px-4 py-2 font-medium text-right">Created</th>
             <th class="px-4 py-2 font-medium text-right">Action</th>
@@ -37,41 +51,38 @@ defineProps<{ artifacts: Artifact[] }>();
 
         <!-- Body -->
         <tbody class="divide-y">
-          <tr v-for="a in artifacts" :key="a.name" class="hover:bg-muted/30">
+          <tr v-if="artifact" class="hover:bg-muted/30">
             <!-- File -->
             <td class="px-4 py-3">
               <div class="flex items-center gap-2 min-w-0">
                 <FileTextIcon class="w-4 h-4 text-muted-foreground shrink-0" />
-                <span class="truncate font-medium">{{ a.name }}</span>
+                <span class="truncate font-medium">{{ artifact.name }}</span>
               </div>
-            </td>
-
-            <!-- Type -->
-            <td class="px-4 py-3">
-              <Badge variant="secondary" class="text-[11px]">{{
-                a.type
-              }}</Badge>
             </td>
 
             <!-- Size -->
             <td class="px-4 py-3">
-              {{ a.size }}
+              {{ humanBytes(artifact.results.size) }}
             </td>
 
             <!-- Created -->
             <td class="px-4 py-3 text-right">
-              {{ a.created }}
+              <NuxtTime
+                v-if="artifact.createdAt"
+                :datetime="artifact.createdAt"
+                day="2-digit"
+                month="2-digit"
+                year="numeric"
+                hour="2-digit"
+                minute="2-digit"
+                second="2-digit"
+                locale="fr-FR"
+              />
             </td>
 
             <!-- Action -->
             <td class="px-4 py-3 text-right">
-              <a
-                :href="a.href || '#'"
-                class="inline-flex items-center justify-center w-7 h-7 border rounded-md"
-                aria-label="Download artifact"
-              >
-                <DownloadIcon class="w-4 h-4" />
-              </a>
+              <DownloadBlob :blob="artifact.results" :name="artifact.name" />
             </td>
           </tr>
         </tbody>
