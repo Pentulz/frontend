@@ -7,6 +7,7 @@ on:
       - main
 env:
   NUXT_APP_BASE_URL: /frontend/
+  NUXT_PUBLIC_API_BASE: "https://pentulz.up.railway.app"
 jobs:
   build:
     runs-on: ubuntu-latest
