@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { JobAgentCard } from "#components";
 import JobDetails from "~/components/job/JobDetails.vue";
 
 definePageMeta({
@@ -56,7 +57,7 @@ const showSkeleton = useSkeleton(pending);
         </template>
 
         <template v-else>
-          <div>Content</div>
+          <JobAgentCard v-if="job" :agent-id="job.agent_id" />
         </template>
       </div>
     </div>

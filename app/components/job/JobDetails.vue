@@ -6,7 +6,7 @@ import {
   CardContent,
   Separator,
 } from "#components";
-import { CogIcon } from "lucide-vue-next";
+import { SettingsIcon } from "lucide-vue-next";
 import { interval, intervalToDuration, formatDuration } from "date-fns";
 
 import type { Job } from "~/composables/use-api";
@@ -31,7 +31,7 @@ const { job } = defineProps<{
     <!-- Header -->
     <CardHeader>
       <CardTitle class="flex items-center gap-2">
-        <CogIcon class="w-5 h-5" />
+        <SettingsIcon class="w-5 h-5" />
         <span>Job Details</span>
       </CardTitle>
     </CardHeader>
