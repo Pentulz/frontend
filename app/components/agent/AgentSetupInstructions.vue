@@ -26,7 +26,8 @@ const args = computed(
 
 // 🟢 Préparation des commandes
 const dockerCmd = computed(
-  () => `docker run --rm ghcr.io/pentulz/agent:latest ${args.value}`,
+  () =>
+    `docker run --rm -it \\\n--name pentulz_agent \\\n--user root \\\n--network host\\\nghcr.io/pentulz/agent:latest ${args.value}`,
 );
 
 const cliCmd = computed(() => `agent ${args.value}`);
