@@ -1,7 +1,13 @@
 <script setup lang="ts">
 import { Card, CardHeader, CardTitle, CardContent, Button } from "#components";
-import { PlayIcon, SettingsIcon, BookmarkIcon } from "lucide-vue-next";
+import {
+  PlayIcon,
+  SettingsIcon,
+  BookmarkIcon,
+  TrashIcon,
+} from "lucide-vue-next";
 import AgentSetupInstructions from "~/components/agent/AgentSetupInstructions.vue";
+import DeleteAgent from "./DeleteAgent.vue";
 import CreateJob from "../forms/CreateJob.vue";
 
 type Props = {
@@ -35,6 +41,13 @@ const { agentId } = defineProps<Props>();
           Configure Agent
         </Button>
       </AgentSetupInstructions>
+
+      <DeleteAgent :agent-id="agentId">
+        <Button variant="outline" class="w-full justify-start gap-2">
+          <TrashIcon class="w-4 h-4" />
+          Delete agent
+        </Button>
+      </DeleteAgent>
     </CardContent>
   </Card>
 
