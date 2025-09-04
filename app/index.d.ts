@@ -1,10 +1,7 @@
 declare module "nuxt/schema" {
   interface AppConfigInput {
-    /** Api configuration */
-    api: {
-      /** The base url the the api */
-      url?: string;
-    };
+    refresh: number;
+    activeMinutesThreshold: number;
   }
 }
 

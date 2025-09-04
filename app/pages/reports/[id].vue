@@ -11,21 +11,20 @@ definePageMeta({
 
 const route = useRoute();
 
-const {
-  request: { error, pending },
-  report,
-} = useReport(route.params.id as string);
+const { request, report } = useReport(route.params.id as string);
 
-const {
-  request: { pending: jobsPending },
-  jobs,
-} = useJobs();
+const { pending, error } = request;
+
+const { request: jobsRequest, jobs } = useJobs();
+
+const { pending: jobsPending } = jobsRequest;
 
 useBackendError(error);
 const showSkeleton = useSkeleton(pending);
 const jobsSkeleton = useSkeleton(jobsPending);
 
 const { generateReportPdf } = usePdfExport();
+const _ = useRefresh([request, jobsRequest]);
 
 const artifacts = computed(() => {
   if (!report.value?.results.metadata.jobs_ids) return [];
@@ -47,23 +46,27 @@ const isExporting = ref(false);
 
 const exportToPdf = async () => {
   if (!report.value) return;
-  
+
   isExporting.value = true;
-  
+
   try {
     // Get DOM elements for the components
-    const reportSummaryElement = document.querySelector('[data-pdf-report-summary]') as HTMLElement;
-    const vulnerabilitiesElement = document.querySelector('[data-pdf-vulnerabilities]') as HTMLElement;
-    
+    const reportSummaryElement = document.querySelector(
+      "[data-pdf-report-summary]",
+    ) as HTMLElement;
+    const vulnerabilitiesElement = document.querySelector(
+      "[data-pdf-vulnerabilities]",
+    ) as HTMLElement;
+
     await generateReportPdf(
       report.value,
       jobs.value,
       report.value.results.all_findings || [],
       reportSummaryElement,
-      vulnerabilitiesElement
+      vulnerabilitiesElement,
     );
   } catch (error) {
-    console.error('Error exporting PDF:', error);
+    console.error("Error exporting PDF:", error);
     // You could add a toast notification here
   } finally {
     isExporting.value = false;
@@ -89,18 +92,18 @@ const exportToPdf = async () => {
           >
         </template>
       </div>
-      
+
       <div class="flex items-center gap-2">
         <Button
           v-if="report && !showSkeleton"
-          @click="exportToPdf"
           :disabled="isExporting"
           variant="outline"
           size="sm"
           class="flex items-center gap-2"
+          @click="exportToPdf"
         >
           <DownloadIcon class="w-4 h-4" />
-          {{ isExporting ? 'Exporting...' : 'Export PDF' }}
+          {{ isExporting ? "Exporting..." : "Export PDF" }}
         </Button>
       </div>
     </div>
@@ -125,7 +128,9 @@ const exportToPdf = async () => {
 
         <template v-else>
           <div data-pdf-vulnerabilities>
-            <VulnerabilitiesFound :finding="report?.results.all_findings ?? []" />
+            <VulnerabilitiesFound
+              :finding="report?.results.all_findings ?? []"
+            />
           </div>
         </template>
       </div>
