@@ -54,16 +54,12 @@ const exportToPdf = async () => {
     const reportSummaryElement = document.querySelector(
       "[data-pdf-report-summary]",
     ) as HTMLElement;
-    const vulnerabilitiesElement = document.querySelector(
-      "[data-pdf-vulnerabilities]",
-    ) as HTMLElement;
 
     await generateReportPdf(
       report.value,
       jobs.value,
       report.value.results.all_findings || [],
       reportSummaryElement,
-      vulnerabilitiesElement,
     );
   } catch (error) {
     console.error("Error exporting PDF:", error);
