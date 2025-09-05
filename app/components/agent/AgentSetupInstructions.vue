@@ -24,7 +24,7 @@ const timeout = ref<number>(30);
 
 const args = computed(
   () =>
-    `\\\n--token "${props.agentKey}" \\\n--api-url "${config.public.apiBase}/api/v1" \\\n--refresh-timeout ${timeout.value ?? 1}`,
+    `\\\n--token "${props.agentKey}" \\\n--api-url "${config.public.apiBase}/api/v1/protected" \\\n--refresh-timeout ${timeout.value ?? 1}`,
 );
 
 // 🟢 Préparation des commandes
