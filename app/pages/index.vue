@@ -37,8 +37,7 @@ const { request: agentsRequest, doc: _agentsDoc, agents } = useAgents();
 const { request: jobsRequest, doc: _jobsDoc, jobs } = useJobs();
 const { request: reportsRequest, doc: _reportsDoc, reports } = useReports();
 
-// doesn't work unless it's assigned to a variable ???
-const _ = useRefresh([agentsRequest, jobsRequest, reportsRequest]);
+useRefresh([agentsRequest, jobsRequest, reportsRequest]);
 
 const agentsSkeleton = useSkeleton(agentsRequest.pending, agentsRequest.data);
 const jobsSkeleton = useSkeleton(jobsRequest.pending, jobsRequest.data);
@@ -47,6 +46,9 @@ const reportsSkeleton = useSkeleton(
   reportsRequest.data,
 );
 
+/**
+ * Stats processed in the front end.
+ */
 const stats = computed<StatCard[]>(() => [
   {
     title: "Total Jobs",
@@ -81,6 +83,10 @@ const stats = computed<StatCard[]>(() => [
   },
 ]);
 
+/**
+ * NOTE: in v1.1.0 the database doesn't keep track of updates which makes it
+ *  hard to show "recent" jobs
+ */
 const recentJobs = computed<RecentJob[]>(() =>
   // TODO: Filter by latest
   jobs.value.slice(0, 3).map<RecentJob>(({ agent_id, ...job }) => {
@@ -91,6 +97,12 @@ const recentJobs = computed<RecentJob[]>(() =>
   }),
 );
 
+/**
+ * Determines an agent status based on the last_seen_at time. Currently, agents
+ * which didn't update in the last 20 minutes will be reported as offline. The
+ * latest version of the agent updates its last_seen_at value every refresh,
+ * meaning that the offline threshold could be lowered
+ */
 const getAgentStatus = ({ last_seen_at, jobs }: Agent) => {
   if (!last_seen_at) return "offline";
 
@@ -103,6 +115,10 @@ const getAgentStatus = ({ last_seen_at, jobs }: Agent) => {
   return duration.minutes < 20 ? "idle" : "offline";
 };
 
+/**
+ * NOTE: in v1.1.0 the database doesn't keep track of updates which makes it
+ *  hard to show "recent" agents
+ */
 const activeAgents = computed<ActiveAgent[]>(() =>
   // TODO: Filter by latest
   agents.value.slice(0, 3).map<ActiveAgent>((agent) => {
@@ -113,6 +129,9 @@ const activeAgents = computed<ActiveAgent[]>(() =>
   }),
 );
 
+/**
+ * Compute the maximum severity found in a report distribution
+ */
 const getMaxSeverity = (
   distribution: Report["results"]["summary"]["severity_distribution"],
 ): "critical" | "high" | "medium" | "low" | "info" => {
@@ -125,6 +144,10 @@ const getMaxSeverity = (
   return distribution.low ? "low" : "info";
 };
 
+/**
+ * NOTE: in v1.1.0 the database doesn't keep track of updates which makes it
+ *  hard to show "recent" reports
+ */
 const recentReports = computed<RecentReport[]>(() =>
   // TODO: Filter by latest
   reports.value
